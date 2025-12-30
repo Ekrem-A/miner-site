@@ -1,15 +1,14 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import { Menu, X, ShoppingCart, User, Search, Zap } from 'lucide-react';
 
-
-
-  export function Header() {
-
-
-    const MiningASICShop = () => {
+export function Header() {
+    
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const [cartCount, setCartCount] = useState(0);
+    
 
     useEffect(() => {
         const handleScroll = () => {
@@ -95,5 +94,5 @@ import { Menu, X, ShoppingCart, User, Search, Zap } from 'lucide-react';
                 )}
             </header>
     );
-  } 
+  
 }

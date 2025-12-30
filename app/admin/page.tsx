@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { 
   Menu, X, LogOut, Home, Package, ShoppingCart, Users, Settings, 

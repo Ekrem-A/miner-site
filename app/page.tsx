@@ -1,8 +1,10 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { Menu, X, ShoppingCart, User, Search, Zap, Shield, TrendingUp, Award, ChevronRight, Cpu, Server, Layers } from 'lucide-react';
 import ProductsSection from '@/app/products/page';
 import { Hero } from './components/common/Hero';
-import {Header} from './components/common/Header';
+import  { Header } from './components/common/Header';
 const MiningASICShop = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -135,9 +137,9 @@ const MiningASICShop = () => {
       `}</style>
 
       {/* Header / TopBar */}
-    <Header />
+      <Header />
 
-    <Hero />
+      <Hero />
 
       {/* Products Section */}  
       <ProductsSection />

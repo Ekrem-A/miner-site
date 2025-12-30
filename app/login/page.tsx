@@ -310,16 +310,6 @@ function LoginForm() {
                 </div>
               </button>
             </form>
-
-            {/* Sign Up Link */}
-            <div className="mt-8 text-center pt-6 border-t border-gray-700/50">
-              <p className="text-gray-400 text-sm font-medium">
-                Hesabınız yok mu?{' '}
-                <Link href="/register" className="text-cyan-400 hover:text-cyan-300 font-bold transition-colors uppercase tracking-wide">
-                  Kayıt Olun
-                </Link>
-              </p>
-            </div>
           </div>
         </div>
 
