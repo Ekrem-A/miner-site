@@ -3,8 +3,10 @@
 import { useState, useEffect } from 'react';
 import { Menu, X, ShoppingCart, User, Search, Zap } from 'lucide-react';
 
+import Image from 'next/image';
+
 export function Header() {
-    
+
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const [cartCount, setCartCount] = useState(0);
@@ -26,9 +28,16 @@ export function Header() {
                 <div className="flex items-center justify-between h-20">
                     {/* Logo */}
                     <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center glow">
-                        <Zap className="w-7 h-7 text-white" strokeWidth={2.5} />
-                    </div>
+                    <div className="flex items-center space-x-3">
+                            <div className="w-36 h-15 rounded-xl bg-gradient-to-b flex items-center justify-center glow">
+                                <Image
+                                src="/logo.png"
+                                alt="Logo"
+                                width={128}
+                                height={128}
+                                />
+                            </div>
+                        </div>
                     <div>
                         <h1 className="orbitron text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">
                         ASIC STORE
