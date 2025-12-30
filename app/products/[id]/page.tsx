@@ -1,4 +1,4 @@
-import { getProducts } from '../../../lib/getProducts';
+import { fetchProducts } from '../../../lib/getProducts';
 import React from 'react';
 
 interface ProductPageProps {
@@ -9,7 +9,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   const { id } = params;
   let product = null;
   try {
-    const products = await getProducts();
+    const products = await fetchProducts();
     product = products.find((p: any) => String(p.id) === id);
   } catch (e) {
     product = null;

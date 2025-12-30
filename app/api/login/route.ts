@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
         isAdmin: profile?.is_admin || false,
         fullName: profile?.full_name,
       },
-      redirectUrl: profile?.is_admin ? '/admin/dashboard' : '/account',
+      redirectUrl: profile?.is_admin ? '/admin/dashboard' : '/admin',
     });
 
     // Set all cookies with proper options

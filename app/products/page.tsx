@@ -1,10 +1,10 @@
 import React from 'react';
-import { getProducts } from '../../lib/getProducts';
+import { fetchProducts } from '@/lib/getProducts';
 
 export default async function ProductsSection() {
-  let products = [];
+  let products: any[] = [];
   try {
-    products = await getProducts();
+    products = await fetchProducts();
   } catch (e) {
     // Hata durumunda boş dizi döner, isterseniz hata mesajı gösterebilirsiniz
     products = [];

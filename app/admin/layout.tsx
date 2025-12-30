@@ -29,24 +29,38 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const checkUser = async () => {
     try {
-      // Check session via API to ensure server-side validation
-      const response = await fetch('/api/auth/session', {
-        credentials: 'include',
+      // Supabase ile session kontrolü
+      const { data: { user: authUser }, error } = await supabase.auth.getUser();
+
+      if (error || !authUser) {
+        router.push('/login?redirect=/admin/dashboard');
+        return;
+      }
+
+      // Admin yetkisi kontrolü
+      const { data: profile } = await supabase
+        .from('user_profiles')
+        .select('is_admin, full_name, is_banned')
+        .eq('id', authUser.id)
+        .single();
+
+      if (profile?.is_banned) {
+        await supabase.auth.signOut();
+        router.push('/login?error=banned');
+        return;
+      }
+
+      if (!profile?.is_admin) {
+        router.push('/');
+        return;
+      }
+
+      setUser({
+        id: authUser.id,
+        email: authUser.email,
+        isAdmin: profile?.is_admin || false,
+        fullName: profile?.full_name,
       });
-
-      if (!response.ok) {
-        router.push('/login?redirect=/admin/dashboard');
-        return;
-      }
-
-      const data = await response.json();
-      
-      if (!data.user || !data.user.isAdmin) {
-        router.push('/login?redirect=/admin/dashboard');
-        return;
-      }
-
-      setUser(data.user);
     } catch (error) {
       console.error('Auth check error:', error);
       router.push('/login?redirect=/admin/dashboard');
