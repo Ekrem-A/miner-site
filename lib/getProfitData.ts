@@ -16,42 +16,29 @@ export type MinerProfitData = {
 
 // Fallback veriler - Vercel'de scraping engellendiğinde kullanılır
 // Bu veriler asicminervalue.com'dan alınmış güncel değerlerdir
+// İsimler senin Supabase'deki ürün isimleriyle BİREBİR eşleşiyor
 const FALLBACK_PROFIT_DATA: MinerProfitData[] = [
-  // Bitcoin SHA-256 Miners
-  { slug: "bitmain-antminer-z15-pro", name: "Bitmain Antminer Z15 Pro", dailyProfitUsd: 29.12, hashrate: "840 kh/s", power: "2780W", algorithm: "Equihash", coin: "Zcash", manufacturer: "Bitmain" },
-  { slug: "bitmain-antminer-z15", name: "Bitmain Antminer Z15", dailyProfitUsd: 14.27, hashrate: "420 kh/s", power: "1510W", algorithm: "Equihash", coin: "Zcash", manufacturer: "Bitmain" },
-  { slug: "bitmain-antminer-s23-hyd-3u", name: "Bitmain Antminer S23 Hyd 3U", dailyProfitUsd: 18.71, hashrate: "1.16 Ph/s", power: "11020W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
-  { slug: "bitmain-antminer-s23-hyd-580th", name: "Bitmain Antminer S23 Hyd 580Th", dailyProfitUsd: 9.36, hashrate: "580 Th/s", power: "5510W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
-  { slug: "bitmain-antminer-s21e-xp-hyd-860th", name: "Bitmain Antminer S21e XP Hyd 860Th", dailyProfitUsd: 6.65, hashrate: "860 Th/s", power: "11180W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
-  { slug: "bitmain-antminer-s21e-xp-hyd-430th", name: "Bitmain Antminer S21e XP Hyd 430Th", dailyProfitUsd: 3.33, hashrate: "430 Th/s", power: "5590W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
-  { slug: "bitmain-antminer-s21-xp-hyd-500th", name: "Bitmain Antminer S21 XP+ Hyd 500Th", dailyProfitUsd: 6.27, hashrate: "500 Th/s", power: "5500W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
-  { slug: "bitmain-antminer-s21-xp-hyd-473th", name: "Bitmain Antminer S21 XP Hyd 473Th", dailyProfitUsd: 5.00, hashrate: "473 Th/s", power: "5676W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
-  { slug: "bitmain-antminer-s21-xp-hyd-395th", name: "Bitmain Antminer S21 XP Hyd 395Th", dailyProfitUsd: 4.15, hashrate: "395 Th/s", power: "5130W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
-  { slug: "bitmain-antminer-s21-xp-270th", name: "Bitmain Antminer S21 XP 270Th", dailyProfitUsd: 2.80, hashrate: "270 Th/s", power: "3645W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
-  { slug: "bitmain-antminer-s21-xp-immersion", name: "Bitmain Antminer S21 XP Immersion 300Th", dailyProfitUsd: 3.10, hashrate: "300 Th/s", power: "4050W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
-  { slug: "bitmain-antminer-s21-pro-234th", name: "Bitmain Antminer S21 Pro 234Th", dailyProfitUsd: 2.45, hashrate: "234 Th/s", power: "3510W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
-  { slug: "bitmain-antminer-s21-200th", name: "Bitmain Antminer S21 200Th", dailyProfitUsd: 2.10, hashrate: "200 Th/s", power: "3550W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
-  { slug: "bitmain-antminer-t21-190th", name: "Bitmain Antminer T21 190Th", dailyProfitUsd: 1.95, hashrate: "190 Th/s", power: "3610W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
-  { slug: "bitmain-antminer-s19-xp-hyd-255th", name: "Bitmain Antminer S19 XP Hyd 255Th", dailyProfitUsd: 2.42, hashrate: "255 Th/s", power: "5304W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
-  { slug: "bitmain-antminer-s19-xp-plus-hyd-293th", name: "Bitmain Antminer S19 XP+ Hyd 293Th", dailyProfitUsd: 2.62, hashrate: "293 Th/s", power: "5418W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
-  { slug: "bitmain-antminer-s19-k-pro-120th", name: "Bitmain Antminer S19K Pro 120Th", dailyProfitUsd: 0.85, hashrate: "120 Th/s", power: "2760W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
-  // Scrypt Miners (LTC/DOGE)
-  { slug: "bitmain-antminer-l11-hyd-2u-35gh", name: "Bitmain Antminer L11 Hyd 2U 35Gh", dailyProfitUsd: 13.28, hashrate: "35 Gh/s", power: "5775W", algorithm: "Scrypt", coin: "LTC/DOGE", manufacturer: "Bitmain" },
-  { slug: "bitmain-antminer-l11-hyd-6u-33gh", name: "Bitmain Antminer L11 Hyd 6U 33Gh", dailyProfitUsd: 11.96, hashrate: "33 Gh/s", power: "5676W", algorithm: "Scrypt", coin: "LTC/DOGE", manufacturer: "Bitmain" },
-  { slug: "bitmain-antminer-l11-pro-21gh", name: "Bitmain Antminer L11 Pro 21Gh", dailyProfitUsd: 7.61, hashrate: "21 Gh/s", power: "3612W", algorithm: "Scrypt", coin: "LTC/DOGE", manufacturer: "Bitmain" },
-  { slug: "bitmain-antminer-l11-20gh", name: "Bitmain Antminer L11 20Gh", dailyProfitUsd: 6.67, hashrate: "20 Gh/s", power: "3680W", algorithm: "Scrypt", coin: "LTC/DOGE", manufacturer: "Bitmain" },
-  { slug: "bitmain-antminer-l9-hyd-2u-27gh", name: "Bitmain Antminer L9 Hyd 2U 27Gh", dailyProfitUsd: 7.33, hashrate: "27 Gh/s", power: "5670W", algorithm: "Scrypt", coin: "LTC/DOGE", manufacturer: "Bitmain" },
-  { slug: "bitmain-antminer-l9-17gh", name: "Bitmain Antminer L9 17Gh", dailyProfitUsd: 5.50, hashrate: "17 Gh/s", power: "3570W", algorithm: "Scrypt", coin: "LTC/DOGE", manufacturer: "Bitmain" },
-  { slug: "volcminer-d3-20gh", name: "VolcMiner D3 20Gh", dailyProfitUsd: 6.91, hashrate: "20 Gh/s", power: "3580W", algorithm: "Scrypt", coin: "LTC/DOGE", manufacturer: "VolcMiner" },
-  { slug: "volcminer-d1-pro-20gh", name: "VolcMiner D1 Pro 20Gh", dailyProfitUsd: 6.63, hashrate: "20 Gh/s", power: "3700W", algorithm: "Scrypt", coin: "LTC/DOGE", manufacturer: "VolcMiner" },
-  { slug: "elphapex-dg2-plus-20gh", name: "ElphaPex DG2+ 20.5Gh", dailyProfitUsd: 6.53, hashrate: "20.5 Gh/s", power: "3900W", algorithm: "Scrypt", coin: "LTC/DOGE", manufacturer: "ElphaPex" },
-  // Other Algorithms
-  { slug: "bitmain-antminer-x9-1mh", name: "Bitmain Antminer X9 1Mh", dailyProfitUsd: 25.34, hashrate: "1 Mh/s", power: "2472W", algorithm: "RandomX", coin: "Monero", manufacturer: "Bitmain" },
-  { slug: "pinecone-matches-inibox-850mh", name: "Pinecone Matches INIBOX 850Mh", dailyProfitUsd: 26.35, hashrate: "850 Mh/s", power: "500W", algorithm: "VersaHash", coin: "InitVerse", manufacturer: "Pinecone" },
-  { slug: "iceriver-aleo-ae3-2gh", name: "IceRiver ALEO AE3 2Gh", dailyProfitUsd: 20.58, hashrate: "2 Gh/s", power: "3400W", algorithm: "zkSNARK", coin: "Aleo", manufacturer: "IceRiver" },
-  { slug: "iceriver-aleo-ae2-720mh", name: "IceRiver ALEO AE2 720Mh", dailyProfitUsd: 7.22, hashrate: "720 Mh/s", power: "1300W", algorithm: "zkSNARK", coin: "Aleo", manufacturer: "IceRiver" },
-  { slug: "jasminer-x44-p-23gh", name: "Jasminer X44-P 23.4Gh", dailyProfitUsd: 12.07, hashrate: "23.4 Gh/s", power: "2550W", algorithm: "EtHash", coin: "ETC", manufacturer: "Jasminer" },
-  { slug: "bitdeer-sealminer-a3-pro-hydro-660th", name: "Bitdeer SealMiner A3 Pro Hydro 660Th", dailyProfitUsd: 5.89, hashrate: "660 Th/s", power: "8250W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitdeer" },
+  { slug: "bitmain-antminer-z15-pro-840-kh-s", name: "Bitmain Antminer Z15 Pro 840 KH/s", dailyProfitUsd: 29.12, hashrate: "840 kh/s", power: "2780W", algorithm: "Equihash", coin: "Zcash", manufacturer: "Bitmain" },
+  { slug: "antminer-t21-190-th", name: "Antminer T21 190 TH", dailyProfitUsd: 1.95, hashrate: "190 Th/s", power: "3610W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
+  { slug: "antminer-s21-xp-hydro-395-th", name: "Antminer S21 XP Hydro 395 TH", dailyProfitUsd: 4.15, hashrate: "395 Th/s", power: "5130W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
+  { slug: "antminer-s21-xp-immersion-300-th", name: "Antminer S21 XP Immersion 300 TH", dailyProfitUsd: 3.10, hashrate: "300 Th/s", power: "4050W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
+  { slug: "antminer-s21-xp-hydro-473-th", name: "Antminer S21 XP Hydro 473 TH", dailyProfitUsd: 5.00, hashrate: "473 Th/s", power: "5676W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
+  { slug: "antminer-s21-e-exp-860-th", name: "Antminer S21 E EXP 860 TH", dailyProfitUsd: 6.65, hashrate: "860 Th/s", power: "11180W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
+  { slug: "volcminer-d3-20gh-s-scrypt-miner", name: "VolcMiner D3 20GH/s Scrypt Miner", dailyProfitUsd: 6.91, hashrate: "20 Gh/s", power: "3580W", algorithm: "Scrypt", coin: "LTC/DOGE", manufacturer: "VolcMiner" },
+  { slug: "antminer-s19-xp-hydro-293-th", name: "Antminer S19 XP+ Hydro 293 TH", dailyProfitUsd: 2.62, hashrate: "293 Th/s", power: "5418W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
+  { slug: "antminer-s21-pro-234-th", name: "Antminer S21 Pro 234 TH", dailyProfitUsd: 2.45, hashrate: "234 Th/s", power: "3510W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
+  { slug: "antminer-s19-k-pro", name: "Antminer S19 K Pro", dailyProfitUsd: 0.85, hashrate: "120 Th/s", power: "2760W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
+  { slug: "antminer-s21-xp-270-th", name: "Antminer S21 XP 270 TH", dailyProfitUsd: 2.80, hashrate: "270 Th/s", power: "3645W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
+  // Bitmain prefix ile de ekleyelim (bazı ürünler "Bitmain" ile başlıyor)
+  { slug: "bitmain-antminer-t21-190-th", name: "Bitmain Antminer T21 190 TH", dailyProfitUsd: 1.95, hashrate: "190 Th/s", power: "3610W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
+  { slug: "bitmain-antminer-s21-xp-hydro-395-th", name: "Bitmain Antminer S21 XP Hydro 395 TH", dailyProfitUsd: 4.15, hashrate: "395 Th/s", power: "5130W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
+  { slug: "bitmain-antminer-s21-xp-immersion-300-th", name: "Bitmain Antminer S21 XP Immersion 300 TH", dailyProfitUsd: 3.10, hashrate: "300 Th/s", power: "4050W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
+  { slug: "bitmain-antminer-s21-xp-hydro-473-th", name: "Bitmain Antminer S21 XP Hydro 473 TH", dailyProfitUsd: 5.00, hashrate: "473 Th/s", power: "5676W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
+  { slug: "bitmain-antminer-s21-e-exp-860-th", name: "Bitmain Antminer S21 E EXP 860 TH", dailyProfitUsd: 6.65, hashrate: "860 Th/s", power: "11180W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
+  { slug: "bitmain-antminer-s19-xp-hydro-293-th", name: "Bitmain Antminer S19 XP+ Hydro 293 TH", dailyProfitUsd: 2.62, hashrate: "293 Th/s", power: "5418W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
+  { slug: "bitmain-antminer-s21-pro-234-th", name: "Bitmain Antminer S21 Pro 234 TH", dailyProfitUsd: 2.45, hashrate: "234 Th/s", power: "3510W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
+  { slug: "bitmain-antminer-s19-k-pro", name: "Bitmain Antminer S19 K Pro", dailyProfitUsd: 0.85, hashrate: "120 Th/s", power: "2760W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
+  { slug: "bitmain-antminer-s21-xp-270-th", name: "Bitmain Antminer S21 XP 270 TH", dailyProfitUsd: 2.80, hashrate: "270 Th/s", power: "3645W", algorithm: "SHA-256", coin: "Bitcoin", manufacturer: "Bitmain" },
 ];
 
 // İsimden slug oluştur
@@ -66,12 +53,60 @@ function createSlugFromName(name: string): string {
 let cachedData: { miners: MinerProfitData[], fetchedAt: number } | null = null;
 const CACHE_DURATION = 60 * 60 * 1000; // 1 saat
 
+// Supabase'den profit verilerini çek
+async function fetchFromSupabase(): Promise<MinerProfitData[] | null> {
+  try {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    
+    if (!supabaseUrl || !supabaseKey) return null;
+    
+    const response = await fetch(`${supabaseUrl}/rest/v1/miner_profits?select=*`, {
+      headers: {
+        'apikey': supabaseKey,
+        'Authorization': `Bearer ${supabaseKey}`,
+      },
+      next: { revalidate: 3600 }, // 1 saat cache
+    });
+    
+    if (!response.ok) return null;
+    
+    const data = await response.json();
+    
+    if (data && data.length > 0) {
+      console.log(`📦 Supabase'den ${data.length} miner çekildi`);
+      return data.map((row: any) => ({
+        slug: row.slug,
+        name: row.name,
+        dailyProfitUsd: row.daily_profit_usd,
+        hashrate: row.hashrate,
+        power: row.power_watts ? `${row.power_watts}W` : undefined,
+        algorithm: row.algorithm,
+        coin: row.coin,
+        manufacturer: row.manufacturer,
+      }));
+    }
+    
+    return null;
+  } catch (err) {
+    console.error("Supabase fetch error:", err);
+    return null;
+  }
+}
+
 // ASICMinerValue'dan tüm miner profit verilerini çek
 export async function fetchMinerProfits(): Promise<MinerProfitData[]> {
   // Cache kontrolü
   if (cachedData && (Date.now() - cachedData.fetchedAt) < CACHE_DURATION) {
     console.log("📦 Returning cached profit data");
     return cachedData.miners;
+  }
+
+  // 1. Önce Supabase'den dene (GitHub Actions ile güncellenen veriler)
+  const supabaseData = await fetchFromSupabase();
+  if (supabaseData && supabaseData.length >= 5) {
+    cachedData = { miners: supabaseData, fetchedAt: Date.now() };
+    return supabaseData;
   }
 
   console.log("🔍 Fetching miners from ASICMinerValue...");
@@ -198,114 +233,81 @@ export async function fetchMinerProfits(): Promise<MinerProfitData[]> {
   }
 }
 
-// Ürün adından model, hashrate, varyant bilgilerini çıkar
-function parseProductInfo(name: string): {
-  model: string;
-  hashrate: number | null;
-  hashrateUnit: string;
-  variant: string[];
-} {
-  const normalized = name.toLowerCase();
-  
-  // Model numarasını bul (s21, t21, z15, l11, d3, vs.)
-  const modelMatch = normalized.match(/([stzlxk])(\d+)([e]?)/i);
-  const model = modelMatch ? `${modelMatch[1]}${modelMatch[2]}${modelMatch[3] || ''}` : '';
-  
-  // Hashrate değerini çıkar
-  const hashrateMatch = name.match(/([\d.,]+)\s*(Ph|Th|Gh|Mh|kh)/i);
-  const hashrate = hashrateMatch ? parseFloat(hashrateMatch[1].replace(',', '')) : null;
-  const hashrateUnit = hashrateMatch ? hashrateMatch[2].toLowerCase() : '';
-  
-  // Varyantları belirle
-  const variant: string[] = [];
-  if (/hydro|hyd/i.test(name)) variant.push('hydro');
-  if (/immersion|imm/i.test(name)) variant.push('immersion');
-  if (/\bpro\b/i.test(name)) variant.push('pro');
-  if (/xp\+/i.test(name)) variant.push('xp+');
-  else if (/xp/i.test(name)) variant.push('xp');
-  if (/\bk\s*pro\b/i.test(name)) variant.push('k-pro');
-  if (/\d+u\b/i.test(name)) {
-    const uMatch = name.match(/(\d+)u\b/i);
-    if (uMatch) variant.push(`${uMatch[1]}u`);
-  }
-  
-  return { model, hashrate, hashrateUnit, variant };
-}
-
 // Ürün adına göre en iyi eşleşen profit verisini bul
+// Direkt ürün adı eşleştirme - senin 11 ürünün için optimize edildi
 export function findBestProfitMatch(productName: string, profitData: MinerProfitData[]): MinerProfitData | null {
   if (!profitData || profitData.length === 0) return null;
   
-  const productInfo = parseProductInfo(productName);
+  // Ürün adını normalize et (küçük harf, fazla boşlukları sil)
+  const normalize = (s: string) => s.toLowerCase().replace(/\s+/g, ' ').trim();
+  const normalizedProduct = normalize(productName);
   
-  let bestMatch: MinerProfitData | null = null;
-  let bestScore = 0;
-  
+  // 1. Birebir isim eşleşmesi
   for (const miner of profitData) {
-    const minerInfo = parseProductInfo(miner.name);
-    let score = 0;
-    
-    // Model eşleşmesi (zorunlu)
-    if (!productInfo.model || !minerInfo.model) continue;
-    if (productInfo.model.toLowerCase() !== minerInfo.model.toLowerCase()) continue;
-    score += 100;
-    
-    // Hashrate eşleşmesi
-    if (productInfo.hashrate && minerInfo.hashrate) {
-      // Aynı birim ve değer
-      if (productInfo.hashrateUnit === minerInfo.hashrateUnit) {
-        const diff = Math.abs(productInfo.hashrate - minerInfo.hashrate);
-        const tolerance = productInfo.hashrate * 0.15; // %15 tolerans
-        if (diff <= tolerance) {
-          score += 50 - (diff / productInfo.hashrate) * 30;
-        }
-      }
-    }
-    
-    // Varyant eşleşmesi
-    const productVariants = new Set(productInfo.variant);
-    const minerVariants = new Set(minerInfo.variant);
-    
-    // Hydro/Immersion önemli
-    const productHasWaterCooling = productVariants.has('hydro') || productVariants.has('immersion');
-    const minerHasWaterCooling = minerVariants.has('hydro') || minerVariants.has('immersion');
-    if (productHasWaterCooling !== minerHasWaterCooling) {
-      score -= 50; // Soğutma tipi uyuşmazlığı ciddi
-    } else if (productHasWaterCooling && minerHasWaterCooling) {
-      score += 30;
-    }
-    
-    // XP eşleşmesi
-    const productHasXp = productVariants.has('xp') || productVariants.has('xp+');
-    const minerHasXp = minerVariants.has('xp') || minerVariants.has('xp+');
-    if (productHasXp !== minerHasXp) {
-      score -= 30;
-    } else if (productHasXp && minerHasXp) {
-      score += 20;
-    }
-    
-    // Pro eşleşmesi
-    if (productVariants.has('pro') === minerVariants.has('pro')) {
-      score += 15;
-    } else {
-      score -= 20;
-    }
-    
-    // K-Pro eşleşmesi
-    if (productVariants.has('k-pro') === minerVariants.has('k-pro')) {
-      score += 15;
-    } else if (productVariants.has('k-pro') || minerVariants.has('k-pro')) {
-      score -= 25;
-    }
-    
-    if (score > bestScore) {
-      bestScore = score;
-      bestMatch = miner;
+    if (normalize(miner.name) === normalizedProduct) {
+      return miner;
     }
   }
   
-  // Minimum skor kontrolü
-  if (bestScore < 50) return null;
+  // 2. "Bitmain" prefix'i olmadan eşleşme (ürün "Bitmain Antminer..." olabilir, data "Antminer..." olabilir)
+  const withoutBitmain = normalizedProduct.replace(/^bitmain\s+/i, '');
+  for (const miner of profitData) {
+    const minerWithoutBitmain = normalize(miner.name).replace(/^bitmain\s+/i, '');
+    if (minerWithoutBitmain === withoutBitmain) {
+      return miner;
+    }
+  }
   
-  return bestMatch;
+  // 3. Anahtar model bilgilerini çıkart ve karşılaştır
+  // Örn: "Antminer S21 Pro 234 TH" -> model: s21, variant: pro, hashrate: 234
+  const extractKey = (name: string): string => {
+    const n = name.toLowerCase();
+    
+    // Model: s21, t21, z15, s19, d3, vb.
+    const modelMatch = n.match(/([stzld])(\d+)/);
+    const model = modelMatch ? modelMatch[0] : '';
+    
+    // Hashrate: 234, 190, 473, vb.
+    const hashMatch = n.match(/(\d{2,3})\s*(th|gh|kh)/i);
+    const hash = hashMatch ? hashMatch[1] : '';
+    
+    // Varyantlar
+    const variants: string[] = [];
+    if (/\bxp\+/.test(n)) variants.push('xp+');
+    else if (/\bxp\b/.test(n)) variants.push('xp');
+    if (/\bpro\b/.test(n)) variants.push('pro');
+    if (/\bk\s*pro\b/.test(n)) variants.push('kpro');
+    if (/hydro|hyd/.test(n)) variants.push('hydro');
+    if (/immersion|imm/.test(n)) variants.push('imm');
+    if (/\bexp?\b/.test(n) && /s21.*e/.test(n)) variants.push('e');
+    
+    return `${model}-${hash}-${variants.sort().join('-')}`;
+  };
+  
+  const productKey = extractKey(productName);
+  
+  for (const miner of profitData) {
+    if (extractKey(miner.name) === productKey) {
+      return miner;
+    }
+  }
+  
+  // 4. Sadece model ve hashrate eşleşmesi (variant olmadan)
+  const extractBasic = (name: string): string => {
+    const n = name.toLowerCase();
+    const modelMatch = n.match(/([stzld])(\d+)/);
+    const model = modelMatch ? modelMatch[0] : '';
+    const hashMatch = n.match(/(\d{2,3})\s*(th|gh|kh)/i);
+    const hash = hashMatch ? hashMatch[1] : '';
+    return `${model}-${hash}`;
+  };
+  
+  const productBasic = extractBasic(productName);
+  for (const miner of profitData) {
+    if (extractBasic(miner.name) === productBasic) {
+      return miner;
+    }
+  }
+  
+  return null;
 }

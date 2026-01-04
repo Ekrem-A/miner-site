@@ -1,0 +1,28 @@
+name: Daily Miner Profit Scraper
+
+on:
+  schedule:
+    - cron: "0 3 * * *" # Her gün saat 03:00 UTC (Türkiye 06:00)
+  workflow_dispatch: # Manuel tetikleme
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      
+      - name: Install dependencies
+        run: npm install axios cheerio @supabase/supabase-js
+      
+      - name: Fetch and save miner profits
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: node scripts/fetchMinerProfit.js
