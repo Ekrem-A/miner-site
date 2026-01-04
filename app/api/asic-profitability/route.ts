@@ -301,34 +301,171 @@ function isMatchingProduct(minerName: string, productName: string): boolean {
   return false;
 }
 
-// Belirli bir ürün için profit bul
+// Belirli bir ürün için profit bul - Gelişmiş eşleştirme
 function findProfitForProduct(miners: MinerProfitResult[], productName: string): MinerProfitResult | null {
-  // Önce exact match dene
+  const normalizedProduct = productName.toLowerCase().trim();
+  
+  console.log(`🔍 Searching profit for: "${productName}"`);
+  
+  // Ürün adından bilgileri çıkar
+  const productInfo = parseProductName(normalizedProduct);
+  console.log(`📋 Parsed product:`, productInfo);
+  
+  let bestMatch: MinerProfitResult | null = null;
+  let bestScore = 0;
+  
   for (const miner of miners) {
-    if (isMatchingProduct(miner.name, productName)) {
-      return miner;
+    const minerInfo = parseProductName(miner.name.toLowerCase());
+    const score = calculateMatchScore(productInfo, minerInfo);
+    
+    if (score > bestScore) {
+      bestScore = score;
+      bestMatch = miner;
     }
   }
   
-  // Model numarasıyla dene
-  const productModel = productName.match(/(z15|s21|s23|s19|t21|d3|d1|l9|l11|x9|x44|ae\d)/i);
-  if (productModel) {
-    for (const miner of miners) {
-      if (miner.name.toLowerCase().includes(productModel[1].toLowerCase())) {
-        // Varyant kontrolü
-        const hasProProduct = /pro/i.test(productName);
-        const hasProMiner = /pro/i.test(miner.name);
-        const hasXpProduct = /xp/i.test(productName);
-        const hasXpMiner = /xp/i.test(miner.name);
-        
-        if (hasProProduct === hasProMiner && hasXpProduct === hasXpMiner) {
-          return miner;
-        }
-      }
+  if (bestMatch && bestScore >= 3) {
+    console.log(`✅ Best match (score: ${bestScore}): ${bestMatch.name}`);
+    return bestMatch;
+  }
+  
+  console.log(`❌ No match found for: ${productName} (best score: ${bestScore})`);
+  return null;
+}
+
+// Ürün adından model, hashrate, varyant bilgilerini çıkar
+function parseProductName(name: string): {
+  model: string;
+  hashrate: number | null;
+  hashrateUnit: string;
+  isHydro: boolean;
+  isPro: boolean;
+  isXp: boolean;
+  isPlus: boolean;
+  isImmersion: boolean;
+  variant: string;
+  manufacturer: string;
+} {
+  const normalized = name.toLowerCase().replace(/[-_]/g, ' ');
+  
+  // Model çıkar (S21, S19, Z15, L11, T21, D3, etc.)
+  const modelMatch = normalized.match(/\b(s21e?|s23|s19|z15|t21|l11|l9|d3|d1|x9|x44|ae3|ae2|ks\d+)\b/i);
+  const model = modelMatch ? modelMatch[1].toLowerCase() : '';
+  
+  // Hashrate çıkar - farklı formatları destekle
+  let hashrate: number | null = null;
+  let hashrateUnit = '';
+  
+  // Format: 473Th, 473 Th, 473th/s, ( 473 Th )
+  const hashratePatterns = [
+    /(\d+(?:\.\d+)?)\s*(ph|th|gh|mh|kh)(?:\/s)?/i,
+    /\(\s*(\d+(?:\.\d+)?)\s*(ph|th|gh|mh|kh)\s*\)/i,
+  ];
+  
+  for (const pattern of hashratePatterns) {
+    const match = normalized.match(pattern);
+    if (match) {
+      hashrate = parseFloat(match[1]);
+      hashrateUnit = match[2].toLowerCase();
+      break;
     }
   }
   
-  return null;;
+  // Varyant bilgileri
+  const isHydro = /\bhyd(?:ro)?\b/i.test(normalized);
+  const isPro = /\bpro\b/i.test(normalized);
+  const isXp = /\bxp\b/i.test(normalized);
+  const isPlus = /\+|\bplus\b/i.test(normalized);
+  const isImmersion = /\bimmer(?:sion)?\b/i.test(normalized);
+  
+  // Tam varyant string'i oluştur
+  let variant = '';
+  if (isXp) variant += 'xp';
+  if (isPlus) variant += '+';
+  if (isPro) variant += 'pro';
+  if (isHydro) variant += 'hyd';
+  if (isImmersion) variant += 'imm';
+  
+  // Manufacturer
+  let manufacturer = '';
+  if (/bitmain|antminer/i.test(normalized)) manufacturer = 'bitmain';
+  else if (/volcminer/i.test(normalized)) manufacturer = 'volcminer';
+  else if (/iceriver/i.test(normalized)) manufacturer = 'iceriver';
+  else if (/jasminer/i.test(normalized)) manufacturer = 'jasminer';
+  else if (/goldshell/i.test(normalized)) manufacturer = 'goldshell';
+  else if (/canaan/i.test(normalized)) manufacturer = 'canaan';
+  else if (/microbt/i.test(normalized)) manufacturer = 'microbt';
+  else if (/bitdeer/i.test(normalized)) manufacturer = 'bitdeer';
+  else if (/elphapex/i.test(normalized)) manufacturer = 'elphapex';
+  else if (/pinecone/i.test(normalized)) manufacturer = 'pinecone';
+  
+  return {
+    model,
+    hashrate,
+    hashrateUnit,
+    isHydro,
+    isPro,
+    isXp,
+    isPlus,
+    isImmersion,
+    variant,
+    manufacturer,
+  };
+}
+
+// İki ürün arasındaki eşleşme skorunu hesapla
+function calculateMatchScore(
+  product: ReturnType<typeof parseProductName>,
+  miner: ReturnType<typeof parseProductName>
+): number {
+  let score = 0;
+  
+  // Model eşleşmesi (en önemli) - 5 puan
+  if (product.model && miner.model) {
+    // S21e ve S21 arasında kısmi eşleşme
+    if (product.model === miner.model) {
+      score += 5;
+    } else if (product.model.replace('e', '') === miner.model.replace('e', '')) {
+      // S21e vs S21 durumu
+      score += 3;
+    }
+  }
+  
+  // Varyant eşleşmesi - her biri için 2 puan
+  if (product.isHydro === miner.isHydro) score += 2;
+  if (product.isPro === miner.isPro) score += 2;
+  if (product.isXp === miner.isXp) score += 2;
+  if (product.isPlus === miner.isPlus) score += 1;
+  if (product.isImmersion === miner.isImmersion) score += 1;
+  
+  // Hashrate eşleşmesi - 3 puan
+  if (product.hashrate && miner.hashrate && product.hashrateUnit === miner.hashrateUnit) {
+    // Exact match
+    if (product.hashrate === miner.hashrate) {
+      score += 4;
+    } 
+    // Yakın değerler (%10 fark içinde)
+    else if (Math.abs(product.hashrate - miner.hashrate) / miner.hashrate < 0.1) {
+      score += 2;
+    }
+    // Yaklaşık eşleşme (%20 fark içinde)
+    else if (Math.abs(product.hashrate - miner.hashrate) / miner.hashrate < 0.2) {
+      score += 1;
+    }
+  }
+  
+  // Manufacturer eşleşmesi - 1 puan
+  if (product.manufacturer && miner.manufacturer && product.manufacturer === miner.manufacturer) {
+    score += 1;
+  }
+  
+  // Varyant uyumsuzluğu varsa ceza ver
+  // Hydro olan ürün, Hydro olmayan ile eşleşmemeli (ve tersi)
+  if (product.isHydro !== miner.isHydro) score -= 3;
+  if (product.isPro !== miner.isPro) score -= 2;
+  if (product.isXp !== miner.isXp) score -= 2;
+  
+  return score;
 }
 
 export async function GET(request: Request) {
@@ -378,15 +515,27 @@ export async function GET(request: Request) {
       if (matchedMiner) {
         return NextResponse.json({
           ...matchedMiner,
+          // ProductProfitDisplay için gerekli field'lar
+          profitPerDayValue: matchedMiner.dailyProfitUsd,
+          profitPerDay: `$${matchedMiner.dailyProfitUsd?.toFixed(2)}/day`,
           source,
           matchedFor: productName,
         });
       }
       
+      // Eşleşme bulunamadıysa, en yakın sonuçları döndür
       return NextResponse.json({ 
         error: 'Eşleşen miner bulunamadı',
         searchedFor: productName,
-        availableMiners: miners.map(m => m.name).slice(0, 20),
+        availableMiners: miners.slice(0, 10).map(m => ({
+          name: m.name,
+          dailyProfit: m.dailyProfitUsd
+        })),
+        // İlk miner'ı similar olarak döndür
+        similar: miners.length > 0 ? [{
+          ...miners[0],
+          profitPerDayValue: miners[0].dailyProfitUsd,
+        }] : []
       }, { status: 404 });
     }
     

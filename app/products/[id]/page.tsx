@@ -11,20 +11,51 @@ interface ProductPageProps {
 async function fetchProfitForProduct(brandName: string, productName: string) {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    const searchModel = `${brandName} ${productName}`.trim();
+    
+    // Önce tam isimle dene
+    const fullName = `${brandName} ${productName}`.trim();
+    console.log(`🔍 Fetching profit for: ${fullName}`);
+    
     const response = await fetch(
-      `${baseUrl}/api/asic-profitability?model=${encodeURIComponent(searchModel)}`,
-      { next: { revalidate: 3600 } }
+      `${baseUrl}/api/asic-profitability?model=${encodeURIComponent(fullName)}`,
+      { next: { revalidate: 3600 }, cache: 'no-store' }
     );
     
-    if (response.ok) {
-      const data = await response.json();
-      if (data.profitPerDayValue) {
-        return data;
-      } else if (data.similar && data.similar.length > 0) {
-        return data.similar[0];
+    const data = await response.json();
+    
+    if (response.ok && data.profitPerDayValue) {
+      console.log(`✅ Found profit: $${data.profitPerDayValue}/day for ${fullName}`);
+      return data;
+    }
+    
+    // Tam isim bulunamadıysa, sadece ürün adıyla dene
+    if (!response.ok) {
+      const response2 = await fetch(
+        `${baseUrl}/api/asic-profitability?model=${encodeURIComponent(productName)}`,
+        { next: { revalidate: 3600 }, cache: 'no-store' }
+      );
+      
+      const data2 = await response2.json();
+      
+      if (response2.ok && data2.profitPerDayValue) {
+        console.log(`✅ Found profit: $${data2.profitPerDayValue}/day for ${productName}`);
+        return data2;
+      }
+      
+      // Similar sonuçlarını kontrol et
+      if (data2.similar && data2.similar.length > 0) {
+        console.log(`📋 Using similar match: ${data2.similar[0].name}`);
+        return data2.similar[0];
       }
     }
+    
+    // Similar sonuçlarını kontrol et
+    if (data.similar && data.similar.length > 0) {
+      console.log(`📋 Using similar match: ${data.similar[0].name}`);
+      return data.similar[0];
+    }
+    
+    console.log(`❌ No profit data found for: ${fullName}`);
   } catch (e) {
     console.error('Profit verisi alınamadı:', e);
   }

@@ -246,47 +246,7 @@ export default function AdminSettingsPage() {
           </div>
         </div>
 
-        {/* Firma Bilgileri */}
-        <div className="bg-white rounded-xl border border-slate-200 p-6">
-          <div className="flex items-center space-x-3 mb-6">
-            <Building size={24} className="text-cyan-600" />
-            <h2 className="text-xl font-bold text-slate-800">Firma Bilgileri</h2>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Vergi Dairesi</label>
-              <input
-                type="text"
-                value={settings.tax_office}
-                onChange={(e) => setSettings({ ...settings, tax_office: e.target.value })}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-cyan-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Vergi Numarası</label>
-              <input
-                type="text"
-                value={settings.tax_number}
-                onChange={(e) => setSettings({ ...settings, tax_number: e.target.value })}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-cyan-500"
-              />
-            </div>
-
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-slate-700 mb-2">MERSİS Numarası</label>
-              <input
-                type="text"
-                value={settings.mersis_number}
-                onChange={(e) => setSettings({ ...settings, mersis_number: e.target.value })}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-cyan-500"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Sosyal Medya */}
+        {/* Sosyal Medya
         <div className="bg-white rounded-xl border border-slate-200 p-6">
           <div className="flex items-center space-x-3 mb-6">
             <Globe size={24} className="text-cyan-600" />
@@ -338,7 +298,7 @@ export default function AdminSettingsPage() {
               />
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Save Button */}
         <div className="bg-white rounded-xl border border-slate-200 p-6">

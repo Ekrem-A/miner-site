@@ -23,131 +23,121 @@ async function fetchAllProfits() {
   return [];
 }
 
-// Ürün slug'ı oluştur
-function createProductSlug(name: string): string {
-  return name
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
+// Ürün adından model, hashrate, varyant bilgilerini çıkar
+function parseProductName(name: string): {
+  model: string;
+  hashrate: number | null;
+  hashrateUnit: string;
+  isHydro: boolean;
+  isPro: boolean;
+  isXp: boolean;
+  isPlus: boolean;
+  isImmersion: boolean;
+} {
+  const normalized = name.toLowerCase().replace(/[-_]/g, ' ');
+  
+  // Model çıkar (S21, S19, Z15, L11, T21, D3, etc.)
+  const modelMatch = normalized.match(/\b(s21e?|s23|s19|z15|t21|l11|l9|d3|d1|x9|x44|ae3|ae2|ks\d+)\b/i);
+  const model = modelMatch ? modelMatch[1].toLowerCase() : '';
+  
+  // Hashrate çıkar
+  let hashrate: number | null = null;
+  let hashrateUnit = '';
+  
+  const hashratePatterns = [
+    /(\d+(?:\.\d+)?)\s*(ph|th|gh|mh|kh)(?:\/s)?/i,
+    /\(\s*(\d+(?:\.\d+)?)\s*(ph|th|gh|mh|kh)\s*\)/i,
+  ];
+  
+  for (const pattern of hashratePatterns) {
+    const match = normalized.match(pattern);
+    if (match) {
+      hashrate = parseFloat(match[1]);
+      hashrateUnit = match[2].toLowerCase();
+      break;
+    }
+  }
+  
+  return {
+    model,
+    hashrate,
+    hashrateUnit,
+    isHydro: /\bhyd(?:ro)?\b/i.test(normalized),
+    isPro: /\bpro\b/i.test(normalized),
+    isXp: /\bxp\b/i.test(normalized),
+    isPlus: /\+|\bplus\b/i.test(normalized),
+    isImmersion: /\bimmer(?:sion)?\b/i.test(normalized),
+  };
 }
 
-// Ürün adına göre profit eşleştir
+// İki ürün arasındaki eşleşme skorunu hesapla
+function calculateMatchScore(
+  product: ReturnType<typeof parseProductName>,
+  miner: ReturnType<typeof parseProductName>
+): number {
+  let score = 0;
+  
+  // Model eşleşmesi (en önemli) - 5 puan
+  if (product.model && miner.model) {
+    if (product.model === miner.model) {
+      score += 5;
+    } else if (product.model.replace('e', '') === miner.model.replace('e', '')) {
+      score += 3;
+    }
+  }
+  
+  // Varyant eşleşmesi
+  if (product.isHydro === miner.isHydro) score += 2;
+  if (product.isPro === miner.isPro) score += 2;
+  if (product.isXp === miner.isXp) score += 2;
+  if (product.isPlus === miner.isPlus) score += 1;
+  if (product.isImmersion === miner.isImmersion) score += 1;
+  
+  // Hashrate eşleşmesi
+  if (product.hashrate && miner.hashrate && product.hashrateUnit === miner.hashrateUnit) {
+    if (product.hashrate === miner.hashrate) {
+      score += 4;
+    } else if (Math.abs(product.hashrate - miner.hashrate) / miner.hashrate < 0.1) {
+      score += 2;
+    } else if (Math.abs(product.hashrate - miner.hashrate) / miner.hashrate < 0.2) {
+      score += 1;
+    }
+  }
+  
+  // Varyant uyumsuzluğu ceza
+  if (product.isHydro !== miner.isHydro) score -= 3;
+  if (product.isPro !== miner.isPro) score -= 2;
+  if (product.isXp !== miner.isXp) score -= 2;
+  
+  return score;
+}
+
+// Ürün adına göre profit eşleştir - Gelişmiş versiyon
 function matchProfitToProduct(product: any, profitData: any[]) {
   if (!profitData || profitData.length === 0) return null;
   
   const productName = (product.name || '').toLowerCase().trim();
-  const productSlug = createProductSlug(product.name || '');
+  const productInfo = parseProductName(productName);
   
-  // Normalize fonksiyonu - karşılaştırma için
-  const normalize = (s: string) => s.toLowerCase()
-    .replace(/[^a-z0-9]/g, '')
-    .replace(/antminer/g, '')
-    .replace(/bitmain/g, '');
+  let bestMatch: any = null;
+  let bestScore = 0;
   
-  const normalizedProduct = normalize(productName);
-  
-  // 1. Slug eşleştirmesi (en güvenilir)
   for (const miner of profitData) {
-    const minerSlug = miner.slug || '';
-    const normalizedMiner = normalize(miner.name || '');
+    const minerInfo = parseProductName(miner.name || '');
+    const score = calculateMatchScore(productInfo, minerInfo);
     
-    // Direkt slug eşleşmesi
-    if (minerSlug === productSlug || 
-        productSlug.includes(minerSlug) || 
-        minerSlug.includes(productSlug)) {
-      return {
-        ...miner,
-        profitPerDayValue: miner.dailyProfitUsd
-      };
-    }
-    
-    // Normalize edilmiş isim eşleşmesi
-    if (normalizedProduct === normalizedMiner ||
-        normalizedProduct.includes(normalizedMiner) ||
-        normalizedMiner.includes(normalizedProduct)) {
-      return {
-        ...miner,
-        profitPerDayValue: miner.dailyProfitUsd
-      };
+    if (score > bestScore) {
+      bestScore = score;
+      bestMatch = miner;
     }
   }
   
-  // 2. Model numarası ile eşleştir (z15, s21, s19, t21, d3, etc.)
-  const modelPatterns = [
-    { pattern: /z15\s*pro/i, key: 'z15-pro' },
-    { pattern: /z15(?!\s*pro)/i, key: 'z15' },
-    { pattern: /s21e?\s*xp\+?\s*hyd.*?(\d{3,4})/i, key: 's21-xp-hyd' },
-    { pattern: /s21\s*xp\+?\s*hyd.*?(\d{3,4})/i, key: 's21-xp-hyd' },
-    { pattern: /s21\s*xp.*?(\d{3,4})/i, key: 's21-xp' },
-    { pattern: /s21\s*pro/i, key: 's21-pro' },
-    { pattern: /s21e/i, key: 's21e' },
-    { pattern: /s21(?!\s*xp|\s*pro|\s*e)/i, key: 's21' },
-    { pattern: /s19.*k.*pro/i, key: 's19-k-pro' },
-    { pattern: /s19\s*xp\+?\s*hyd/i, key: 's19-xp-hyd' },
-    { pattern: /s19\s*xp/i, key: 's19-xp' },
-    { pattern: /s19(?!\s*xp|\s*k)/i, key: 's19' },
-    { pattern: /t21/i, key: 't21' },
-    { pattern: /l11/i, key: 'l11' },
-    { pattern: /l9/i, key: 'l9' },
-    { pattern: /s23/i, key: 's23' },
-    { pattern: /d3|volcminer/i, key: 'd3' },
-  ];
-  
-  for (const { pattern, key } of modelPatterns) {
-    if (pattern.test(productName)) {
-      // Hashrate'i de kontrol et
-      const hashrateMatch = productName.match(/(\d{3,4})\s*(?:th|gh|kh)/i);
-      const targetHashrate = hashrateMatch ? hashrateMatch[1] : null;
-      
-      for (const miner of profitData) {
-        const minerSlug = (miner.slug || '').toLowerCase();
-        const minerName = (miner.name || '').toLowerCase();
-        
-        if (minerSlug.includes(key.replace(/-/g, '')) || 
-            minerSlug.includes(key) ||
-            minerName.includes(key.replace(/-/g, ' '))) {
-          
-          // Hashrate eşleşmesi varsa daha iyi
-          if (targetHashrate) {
-            if (minerSlug.includes(targetHashrate) || minerName.includes(targetHashrate)) {
-              return {
-                ...miner,
-                profitPerDayValue: miner.dailyProfitUsd
-              };
-            }
-          } else {
-            return {
-              ...miner,
-              profitPerDayValue: miner.dailyProfitUsd
-            };
-          }
-        }
-      }
-      
-      // Hashrate olmadan sadece model ile eşleştir
-      for (const miner of profitData) {
-        const minerSlug = (miner.slug || '').toLowerCase();
-        if (minerSlug.includes(key.replace(/-/g, ''))) {
-          return {
-            ...miner,
-            profitPerDayValue: miner.dailyProfitUsd
-          };
-        }
-      }
-    }
-  }
-  
-  // 3. VolcMiner özel eşleştirme
-  if (productName.includes('volcminer') || productName.includes('volc') || productName.includes('d3')) {
-    for (const miner of profitData) {
-      if ((miner.slug || '').toLowerCase().includes('volcminer') ||
-          (miner.slug || '').toLowerCase().includes('d3')) {
-        return {
-          ...miner,
-          profitPerDayValue: miner.dailyProfitUsd
-        };
-      }
-    }
+  if (bestMatch && bestScore >= 3) {
+    return {
+      ...bestMatch,
+      profitPerDayValue: bestMatch.dailyProfitUsd,
+      matchScore: bestScore
+    };
   }
   
   return null;
