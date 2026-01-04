@@ -12,8 +12,10 @@ import {
   CheckCircle,
   AlertCircle
 } from 'lucide-react';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 export default function ContactPage() {
+  const { settings, loading } = useSiteSettings();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -22,6 +24,9 @@ export default function ContactPage() {
     message: ''
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+
+  // WhatsApp numarasını formatla
+  const whatsappNumber = settings.contact_phone?.replace(/[^0-9]/g, '') || '905559725387';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,7 +89,7 @@ export default function ContactPage() {
                   </div>
                 </div>
                 <a 
-                  href="https://wa.me/905XXXXXXXXX?text=Merhaba,%20bilgi%20almak%20istiyorum."
+                  href={`https://wa.me/${whatsappNumber}?text=Merhaba,%20bilgi%20almak%20istiyorum.`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full py-3 bg-green-500 hover:bg-green-600 text-white rounded-xl font-semibold transition-all flex items-center justify-center gap-2"
@@ -104,8 +109,8 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <p className="font-medium text-white">Telefon</p>
-                    <a href="tel:+902125550000" className="text-gray-400 hover:text-cyan-300 transition-colors">
-                      +90 (212) 555 00 00
+                    <a href={`tel:${settings.contact_phone || '+902125550000'}`} className="text-gray-400 hover:text-cyan-300 transition-colors">
+                      {settings.contact_phone || '+90 (212) 555 00 00'}
                     </a>
                   </div>
                 </div>
@@ -116,8 +121,8 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <p className="font-medium text-white">E-posta</p>
-                    <a href="mailto:info@asicstore.com" className="text-gray-400 hover:text-cyan-300 transition-colors">
-                      info@asicstore.com
+                    <a href={`mailto:${settings.contact_email || 'info@asicstore.com'}`} className="text-gray-400 hover:text-cyan-300 transition-colors">
+                      {settings.contact_email || 'info@asicstore.com'}
                     </a>
                   </div>
                 </div>
@@ -129,8 +134,8 @@ export default function ContactPage() {
                   <div>
                     <p className="font-medium text-white">Adres</p>
                     <p className="text-gray-400">
-                      Maslak Mah. Büyükdere Cad. No:123<br />
-                      Sarıyer / İstanbul, Türkiye
+                      {settings.contact_address || 'Maslak Mah. Büyükdere Cad. No:123'}<br />
+                      {settings.contact_city || 'Sarıyer / İstanbul, Türkiye'}
                     </p>
                   </div>
                 </div>
@@ -142,8 +147,7 @@ export default function ContactPage() {
                   <div>
                     <p className="font-medium text-white">Çalışma Saatleri</p>
                     <p className="text-gray-400">
-                      Pazartesi - Cumartesi<br />
-                      09:00 - 18:00
+                      {settings.business_hours || 'Pazartesi - Cumartesi 09:00 - 18:00'}
                     </p>
                   </div>
                 </div>
@@ -158,9 +162,10 @@ export default function ContactPage() {
                   <h3 className="font-bold text-lg text-cyan-400">Şirket Bilgileri</h3>
                 </div>
                 <div className="space-y-2 text-sm text-gray-400">
-                  <p><span className="text-gray-500">Ünvan:</span> ASIC Store Teknoloji A.Ş.</p>
-                  <p><span className="text-gray-500">Vergi Dairesi:</span> Maslak V.D.</p>
-                  <p><span className="text-gray-500">Vergi No:</span> 1234567890</p>
+                  <p><span className="text-gray-500">Ünvan:</span> {settings.site_name || 'ASIC Store'}</p>
+                  {settings.tax_office && <p><span className="text-gray-500">Vergi Dairesi:</span> {settings.tax_office}</p>}
+                  {settings.tax_number && <p><span className="text-gray-500">Vergi No:</span> {settings.tax_number}</p>}
+                  {settings.mersis_number && <p><span className="text-gray-500">MERSİS No:</span> {settings.mersis_number}</p>}
                 </div>
               </div>
             </div>

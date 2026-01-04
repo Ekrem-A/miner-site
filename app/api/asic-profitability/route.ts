@@ -25,6 +25,7 @@ export type MinerProfitResult = {
   hashrate?: string;
   power?: string;
   algorithm?: string;
+  coin?: string;
   manufacturer?: string;
   fetchedAt?: string;
 };
@@ -37,142 +38,141 @@ function createSlugFromName(name: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
-// Ürün adı benzerlik kontrolü
-function isMatchingProduct(minerName: string, productName: string): boolean {
-  const normalize = (s: string) => s.toLowerCase()
-    .replace(/[^a-z0-9]/g, '')
-    .replace(/antminer/g, '')
-    .replace(/bitmain/g, '')
-    .replace(/volcminer/g, 'volc');
-  
-  const m = normalize(minerName);
-  const p = normalize(productName);
-  
-  // Direkt eşleşme
-  if (m.includes(p) || p.includes(m)) return true;
-  
-  // Model numarası eşleşmesi (z15, s21, t21, etc.)
-  const modelRegex = /(z15|s21|s19|t21|d3|l9|l11|ks\d+)/gi;
-  const minerModels = minerName.match(modelRegex) || [];
-  const productModels = productName.match(modelRegex) || [];
-  
-  for (const mm of minerModels) {
-    for (const pm of productModels) {
-      if (mm.toLowerCase() === pm.toLowerCase()) {
-        // Pro, XP, Hydro gibi varyantları da kontrol et
-        const hasProM = /pro/i.test(minerName);
-        const hasProP = /pro/i.test(productName);
-        const hasXpM = /xp/i.test(minerName);
-        const hasXpP = /xp/i.test(productName);
-        const hasHydM = /hyd/i.test(minerName);
-        const hasHydP = /hyd/i.test(productName);
-        
-        // Varyant uyumu kontrolü
-        if (hasProM !== hasProP && (hasProM || hasProP)) continue;
-        if (hasXpM !== hasXpP && (hasXpM || hasXpP)) continue;
-        if (hasHydM !== hasHydP && (hasHydM || hasHydP)) continue;
-        
-        return true;
-      }
-    }
-  }
-  
-  return false;
-}
-
-// Hardcoded profit data - güncel değerler asicminervalue.com'dan
-// Bu veriler otomatik güncelleme yapılamadığında fallback olarak kullanılır
-const FALLBACK_PROFIT_DATA: MinerProfitResult[] = [
-  { slug: "antminer-z15-pro", name: "Bitmain Antminer Z15 Pro", dailyProfitUsd: 27.96, hashrate: "840 kh/s", power: "2780W", algorithm: "Equihash", manufacturer: "Bitmain" },
-  { slug: "antminer-z15", name: "Bitmain Antminer Z15", dailyProfitUsd: 13.59, hashrate: "420 kh/s", power: "1510W", algorithm: "Equihash", manufacturer: "Bitmain" },
-  { slug: "antminer-t21", name: "Bitmain Antminer T21", dailyProfitUsd: 2.50, hashrate: "190 Th/s", power: "3610W", algorithm: "SHA-256", manufacturer: "Bitmain" },
-  { slug: "antminer-s21-xp-hyd-473th", name: "Bitmain Antminer S21 XP Hyd 473Th", dailyProfitUsd: 4.80, hashrate: "473 Th/s", power: "5676W", algorithm: "SHA-256", manufacturer: "Bitmain" },
-  { slug: "antminer-s21-xp-hyd-395th", name: "Bitmain Antminer S21 XP Hyd 395Th", dailyProfitUsd: 4.00, hashrate: "395 Th/s", power: "5130W", algorithm: "SHA-256", manufacturer: "Bitmain" },
-  { slug: "antminer-s21-xp-plus-hyd-500th", name: "Bitmain Antminer S21 XP+ Hyd 500Th", dailyProfitUsd: 6.28, hashrate: "500 Th/s", power: "5500W", algorithm: "SHA-256", manufacturer: "Bitmain" },
-  { slug: "antminer-s21-xp-270th", name: "Bitmain Antminer S21 XP 270Th", dailyProfitUsd: 2.74, hashrate: "270 Th/s", power: "3645W", algorithm: "SHA-256", manufacturer: "Bitmain" },
-  { slug: "antminer-s21-xp-immersion", name: "Bitmain Antminer S21 XP Immersion", dailyProfitUsd: 3.00, hashrate: "300 Th/s", power: "4050W", algorithm: "SHA-256", manufacturer: "Bitmain" },
-  { slug: "antminer-s21e-xp-hyd-860th", name: "Bitmain Antminer S21e XP Hyd 860Th", dailyProfitUsd: 6.68, hashrate: "860 Th/s", power: "11180W", algorithm: "SHA-256", manufacturer: "Bitmain" },
-  { slug: "antminer-s21e-xp-hyd-430th", name: "Bitmain Antminer S21e XP Hyd 430Th", dailyProfitUsd: 3.34, hashrate: "430 Th/s", power: "5590W", algorithm: "SHA-256", manufacturer: "Bitmain" },
-  { slug: "antminer-s21-pro", name: "Bitmain Antminer S21 Pro", dailyProfitUsd: 2.37, hashrate: "234 Th/s", power: "3510W", algorithm: "SHA-256", manufacturer: "Bitmain" },
-  { slug: "antminer-s19-k-pro", name: "Bitmain Antminer S19K Pro", dailyProfitUsd: 0.80, hashrate: "120 Th/s", power: "2760W", algorithm: "SHA-256", manufacturer: "Bitmain" },
-  { slug: "antminer-s19-xp-hyd", name: "Bitmain Antminer S19 XP Hyd", dailyProfitUsd: 2.40, hashrate: "255 Th/s", power: "5304W", algorithm: "SHA-256", manufacturer: "Bitmain" },
-  { slug: "antminer-s19-xp-plus-hyd", name: "Bitmain Antminer S19 XP+ Hyd 293Th", dailyProfitUsd: 2.62, hashrate: "293 Th/s", power: "5418W", algorithm: "SHA-256", manufacturer: "Bitmain" },
-  { slug: "volcminer-d3", name: "VolcMiner D3", dailyProfitUsd: 11.19, hashrate: "20 Gh/s", power: "3580W", algorithm: "Scrypt", manufacturer: "VolcMiner" },
-  { slug: "antminer-l9-17gh", name: "Bitmain Antminer L9 17Gh", dailyProfitUsd: 8.25, hashrate: "17 Gh/s", power: "3570W", algorithm: "Scrypt", manufacturer: "Bitmain" },
-  { slug: "antminer-l11-20gh", name: "Bitmain Antminer L11 20Gh", dailyProfitUsd: 10.95, hashrate: "20 Gh/s", power: "3680W", algorithm: "Scrypt", manufacturer: "Bitmain" },
-  { slug: "antminer-s23", name: "Bitmain Antminer S23", dailyProfitUsd: 3.99, hashrate: "318 Th/s", power: "3498W", algorithm: "SHA-256", manufacturer: "Bitmain" },
-];
-
 // Ana sayfadan TÜM miner'ları ve profit'lerini çek
 async function fetchAllMinersFromMainPage(): Promise<MinerProfitResult[]> {
-  console.log("Fetching all miners from ASICMinerValue main page...");
+  console.log("🔍 Fetching all miners from ASICMinerValue main page...");
   
   try {
-    const { data } = await axios.get(BASE_URL, {
+    const { data: html } = await axios.get(BASE_URL, {
       headers: {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-        "Accept-Language": "en-US,en;q=0.5",
-        "Cache-Control": "no-cache",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Connection": "keep-alive",
+        "Upgrade-Insecure-Requests": "1",
       },
       timeout: 30000,
     });
 
-    const $ = cheerio.load(data);
+    const $ = cheerio.load(html);
     const miners: MinerProfitResult[] = [];
     const seenNames = new Set<string>();
     
-    // Tüm text'i al ve satırlara böl
-    const bodyText = $('body').text();
+    // Tüm sayfadaki text'i al
+    const fullText = $('body').text();
     
-    // Miner pattern: "Manufacturer Model (hashrate) ... $XX.XX /day"
-    // Regex ile her miner'ı bul
-    const minerRegex = /(Bitmain|VolcMiner|IceRiver|Jasminer|Goldshell|Canaan|MicroBT|Pinecone|ElphaPex|Bitdeer)\s+([\w\s\-\+\.]+?)\s*\(\s*([\d.,]+\s*(?:Ph|Th|Gh|Mh|kh))\s*\)[^$]*?\$([\d,.]+)\s*\/\s*day/gi;
+    // Tüm manufacturers
+    const manufacturers = ['Bitmain', 'VolcMiner', 'IceRiver', 'Jasminer', 'Goldshell', 'Canaan', 'MicroBT', 'Pinecone', 'ElphaPex', 'Bitdeer'];
     
-    let match;
-    while ((match = minerRegex.exec(bodyText)) !== null) {
-      const manufacturer = match[1];
-      const model = match[2].trim();
-      const hashrate = match[3];
-      const profit = parseFloat(match[4].replace(',', ''));
+    // Profit pattern'lerini bul
+    const profitPattern = /\$\s*([\d,.]+)\s*\/\s*day/g;
+    let profitMatch;
+    
+    while ((profitMatch = profitPattern.exec(fullText)) !== null) {
+      const profit = parseFloat(profitMatch[1].replace(',', ''));
+      if (isNaN(profit) || profit <= 0 || profit > 10000) continue;
       
-      const fullName = `${manufacturer} ${model}`;
-      const normalizedName = fullName.toLowerCase();
+      // Profit'in öncesindeki 800 karaktere bak
+      const start = Math.max(0, profitMatch.index - 800);
+      const beforeProfit = fullText.slice(start, profitMatch.index);
       
-      if (!seenNames.has(normalizedName) && profit > 0 && profit < 10000) {
-        seenNames.add(normalizedName);
+      // Manufacturer ve model bul
+      for (const mfr of manufacturers) {
+        // Pattern: Manufacturer Manufacturer ModelName ( hashrate )
+        // veya sadece: Manufacturer ModelName ( hashrate )
+        const patterns = [
+          new RegExp(`${mfr}\\s+${mfr}\\s+([\\w\\s\\-\\+\\.\\d]+?)\\s*\\(\\s*([\\d.,]+\\s*(?:Ph|Th|Gh|Mh|kh))\\s*\\)`, 'gi'),
+          new RegExp(`${mfr}\\s+([\\w\\s\\-\\+\\.\\d]+?)\\s*\\(\\s*([\\d.,]+\\s*(?:Ph|Th|Gh|Mh|kh))\\s*\\)`, 'gi'),
+        ];
         
-        miners.push({
-          slug: createSlugFromName(fullName),
-          name: fullName,
-          manufacturer,
-          dailyProfitUsd: profit,
-          hashrate: hashrate + '/s',
-          fetchedAt: new Date().toISOString(),
-        });
+        for (const pattern of patterns) {
+          let lastMatch = null;
+          let mfrMatch;
+          pattern.lastIndex = 0;
+          
+          while ((mfrMatch = pattern.exec(beforeProfit)) !== null) {
+            lastMatch = mfrMatch;
+          }
+          
+          if (lastMatch) {
+            const model = lastMatch[1].trim();
+            const hashrate = lastMatch[2];
+            const fullName = `${mfr} ${model}`;
+            const normalizedName = fullName.toLowerCase().replace(/\s+/g, ' ').trim();
+            
+            // Sadece geçerli model adlarını kabul et (en az 2 karakter)
+            if (model.length < 2) continue;
+            
+            if (!seenNames.has(normalizedName)) {
+              seenNames.add(normalizedName);
+              
+              // Power bul
+              const powerMatch = beforeProfit.match(/(\d{2,5})\s*W/);
+              const power = powerMatch ? powerMatch[1] + 'W' : undefined;
+              
+              // Algorithm bul
+              const algorithms = ['SHA-256', 'Scrypt', 'Equihash', 'EtHash', 'RandomX', 'zkSNARK', 'VersaHash', 'Blake3'];
+              let algorithm = '';
+              for (const alg of algorithms) {
+                if (beforeProfit.toLowerCase().includes(alg.toLowerCase())) {
+                  algorithm = alg;
+                  break;
+                }
+              }
+              
+              // Coin bul
+              const coinPatterns = [
+                { pattern: /Bitcoin|BTC/i, coin: 'Bitcoin' },
+                { pattern: /Litecoin|LTC|Dogecoin|DOGE/i, coin: 'LTC/DOGE' },
+                { pattern: /Zcash|ZEC|Horizen/i, coin: 'Zcash' },
+                { pattern: /Monero|XMR/i, coin: 'Monero' },
+                { pattern: /Ethereum Classic|ETC/i, coin: 'ETC' },
+                { pattern: /Aleo/i, coin: 'Aleo' },
+                { pattern: /Kaspa|KAS/i, coin: 'Kaspa' },
+                { pattern: /InitVerse/i, coin: 'InitVerse' },
+              ];
+              
+              let coin = '';
+              for (const { pattern: coinPat, coin: coinName } of coinPatterns) {
+                if (coinPat.test(beforeProfit)) {
+                  coin = coinName;
+                  break;
+                }
+              }
+              
+              miners.push({
+                slug: createSlugFromName(fullName),
+                name: fullName,
+                manufacturer: mfr,
+                dailyProfitUsd: profit,
+                hashrate: hashrate + '/s',
+                power,
+                algorithm,
+                coin,
+                fetchedAt: new Date().toISOString(),
+              });
+              break;
+            }
+          }
+        }
+        
+        // Bir manufacturer için eşleşme bulduysa diğerlerini deneme
+        if (miners.length > seenNames.size - 1) break;
       }
     }
     
-    console.log(`Parsed ${miners.length} miners from main page`);
+    console.log(`✅ Parsed ${miners.length} miners from ASICMinerValue`);
     
-    // Yeterli veri bulunamadıysa fallback kullan
-    if (miners.length < 5) {
-      console.log("Using fallback data due to insufficient parsed results");
-      return FALLBACK_PROFIT_DATA.map(m => ({
-        ...m,
-        fetchedAt: new Date().toISOString(),
-      }));
+    // Log ilk birkaç tanesini
+    if (miners.length > 0) {
+      console.log("Sample miners:", miners.slice(0, 5).map(m => `${m.name}: $${m.dailyProfitUsd}/day`));
     }
     
     return miners;
   } catch (err) {
-    console.error("Error fetching main page:", err);
-    // Hata durumunda fallback kullan
-    console.log("Using fallback data due to fetch error");
-    return FALLBACK_PROFIT_DATA.map(m => ({
-      ...m,
-      fetchedAt: new Date().toISOString(),
-    }));
+    console.error("❌ Error fetching from ASICMinerValue:", err);
+    return [];
   }
 }
 
@@ -212,6 +212,7 @@ async function saveToSupabase(profits: MinerProfitResult[]) {
             hashrate: profit.hashrate,
             power: profit.power,
             algorithm: profit.algorithm,
+            coin: profit.coin,
             manufacturer: profit.manufacturer,
             fetched_at: new Date().toISOString(),
           }, {
@@ -235,9 +236,9 @@ async function getFromSupabase(): Promise<MinerProfitResult[] | null> {
     
     if (error || !data) return null;
     
-    // Son 24 saat içindeki verileri kontrol et
-    const oneDayAgo = new Date(Date.now() - CACHE_DURATION);
-    const validData = data.filter(row => new Date(row.fetched_at) > oneDayAgo);
+    // Son 1 saat içindeki verileri kontrol et
+    const oneHourAgo = new Date(Date.now() - CACHE_DURATION);
+    const validData = data.filter(row => new Date(row.fetched_at) > oneHourAgo);
     
     if (validData.length === 0) return null;
     
@@ -248,12 +249,56 @@ async function getFromSupabase(): Promise<MinerProfitResult[] | null> {
       hashrate: row.hashrate,
       power: row.power,
       algorithm: row.algorithm,
+      coin: row.coin,
       manufacturer: row.manufacturer,
       fetchedAt: row.fetched_at,
     }));
   } catch {
     return null;
   }
+}
+
+// Ürün adı benzerlik kontrolü
+function isMatchingProduct(minerName: string, productName: string): boolean {
+  const normalize = (s: string) => s.toLowerCase()
+    .replace(/[^a-z0-9]/g, '')
+    .replace(/antminer/g, '')
+    .replace(/bitmain/g, '')
+    .replace(/volcminer/g, 'volc');
+  
+  const m = normalize(minerName);
+  const p = normalize(productName);
+  
+  // Direkt eşleşme
+  if (m.includes(p) || p.includes(m)) return true;
+  
+  // Model numarası eşleşmesi
+  const modelRegex = /(z15|s21|s23|s19|t21|d3|d1|l9|l11|x9|x44|ae\d)/gi;
+  const minerModels = minerName.match(modelRegex) || [];
+  const productModels = productName.match(modelRegex) || [];
+  
+  for (const mm of minerModels) {
+    for (const pm of productModels) {
+      if (mm.toLowerCase() === pm.toLowerCase()) {
+        // Pro, XP, Hydro gibi varyantları da kontrol et
+        const hasProM = /pro/i.test(minerName);
+        const hasProP = /pro/i.test(productName);
+        const hasXpM = /xp/i.test(minerName);
+        const hasXpP = /xp/i.test(productName);
+        const hasHydM = /hyd/i.test(minerName);
+        const hasHydP = /hyd/i.test(productName);
+        
+        // Varyant uyumu kontrolü
+        if (hasProM !== hasProP && (hasProM || hasProP)) continue;
+        if (hasXpM !== hasXpP && (hasXpM || hasXpP)) continue;
+        if (hasHydM !== hasHydP && (hasHydM || hasHydP)) continue;
+        
+        return true;
+      }
+    }
+  }
+  
+  return false;
 }
 
 // Belirli bir ürün için profit bul
@@ -266,7 +311,7 @@ function findProfitForProduct(miners: MinerProfitResult[], productName: string):
   }
   
   // Model numarasıyla dene
-  const productModel = productName.match(/(z15|s21|s19|t21|d3|l9|l11)/i);
+  const productModel = productName.match(/(z15|s21|s23|s19|t21|d3|d1|l9|l11|x9|x44|ae\d)/i);
   if (productModel) {
     for (const miner of miners) {
       if (miner.name.toLowerCase().includes(productModel[1].toLowerCase())) {
@@ -283,7 +328,7 @@ function findProfitForProduct(miners: MinerProfitResult[], productName: string):
     }
   }
   
-  return null;
+  return null;;
 }
 
 export async function GET(request: Request) {

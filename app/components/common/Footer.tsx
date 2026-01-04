@@ -1,6 +1,11 @@
-import { Menu, X, ShoppingCart, User, Search, Zap, Shield, TrendingUp, Award, ChevronRight, Cpu, Server, Layers } from 'lucide-react';
+'use client';
+
+import { Zap, Facebook, Instagram, Twitter, Linkedin } from 'lucide-react';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 export function Footer() {
+  const { settings } = useSiteSettings();
+
   return (
     <div>
         <footer className="bg-slate-950 border-t border-cyan-500/20 py-12 mt-20">
@@ -12,11 +17,34 @@ export function Footer() {
                 <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center">
                   <Zap className="w-6 h-6 text-white" strokeWidth={2.5} />
                 </div>
-                <h3 className="orbitron text-xl font-black text-cyan-400">ASIC STORE</h3>
+                <h3 className="orbitron text-xl font-black text-cyan-400">{settings.site_name || 'ASIC STORE'}</h3>
               </div>
               <p className="text-gray-400 text-sm">
-                Türkiye'nin en güvenilir kripto madencilik ekipmanları tedarikçisi.
+                {settings.site_description || "Türkiye'nin en güvenilir kripto madencilik ekipmanları tedarikçisi."}
               </p>
+              {/* Social Media Links */}
+              <div className="flex space-x-4 mt-4">
+                {settings.social_facebook && (
+                  <a href={settings.social_facebook} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-cyan-300 transition-colors">
+                    <Facebook className="w-5 h-5" />
+                  </a>
+                )}
+                {settings.social_instagram && (
+                  <a href={settings.social_instagram} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-cyan-300 transition-colors">
+                    <Instagram className="w-5 h-5" />
+                  </a>
+                )}
+                {settings.social_twitter && (
+                  <a href={settings.social_twitter} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-cyan-300 transition-colors">
+                    <Twitter className="w-5 h-5" />
+                  </a>
+                )}
+                {settings.social_linkedin && (
+                  <a href={settings.social_linkedin} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-cyan-300 transition-colors">
+                    <Linkedin className="w-5 h-5" />
+                  </a>
+                )}
+              </div>
             </div>
 
             {/* Quick Links */}
@@ -45,15 +73,18 @@ export function Footer() {
             <div>
               <h4 className="font-bold text-lg mb-4 text-cyan-300">İletişim</h4>
               <ul className="space-y-2 text-gray-400 text-sm">
-                <li>Email: info@asicstore.com</li>
-                <li>Tel: +90 (212) 555 0000</li>
-                <li>Adres: İstanbul, Türkiye</li>
+                {settings.contact_email && <li>Email: {settings.contact_email}</li>}
+                {settings.contact_phone && <li>Tel: {settings.contact_phone}</li>}
+                {(settings.contact_address || settings.contact_city) && (
+                  <li>Adres: {settings.contact_address}{settings.contact_city && `, ${settings.contact_city}`}</li>
+                )}
+                {settings.business_hours && <li>Çalışma Saatleri: {settings.business_hours}</li>}
               </ul>
             </div>
           </div>
 
           <div className="border-t border-cyan-500/20 pt-8 text-center text-gray-400 text-sm">
-            <p>&copy; 2024 ASIC Store. Tüm hakları saklıdır.</p>
+            <p>&copy; {new Date().getFullYear()} {settings.site_name || 'ASIC Store'}. Tüm hakları saklıdır.</p>
           </div>
         </div>
         </footer>

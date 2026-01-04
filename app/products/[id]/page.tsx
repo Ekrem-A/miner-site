@@ -175,7 +175,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
               <div className="flex gap-4">
                 <a 
-                  href={`https://wa.me/905XXXXXXXXX?text=${encodeURIComponent(`Merhaba, ${product.name} ürünü hakkında bilgi almak istiyorum.`)}`}
+                  href={`https://wa.me/XXXXXXXXX?text=${encodeURIComponent(`Merhaba, ${product.name} ürünü hakkında bilgi almak istiyorum.`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex-1 py-4 px-6 rounded-xl font-bold text-lg transition-all bg-green-500 hover:bg-green-600 text-white shadow-lg shadow-green-500/25 text-center flex items-center justify-center gap-2"
