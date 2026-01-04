@@ -59,22 +59,39 @@ async function fetchFromSupabase(): Promise<MinerProfitData[] | null> {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     
-    if (!supabaseUrl || !supabaseKey) return null;
+    console.log("🔍 Supabase check - URL:", supabaseUrl ? "✓ VAR" : "✗ YOK");
+    console.log("🔍 Supabase check - KEY:", supabaseKey ? "✓ VAR" : "✗ YOK");
+    
+    if (!supabaseUrl || !supabaseKey) {
+      console.log("❌ Supabase credentials missing!");
+      return null;
+    }
     
     const response = await fetch(`${supabaseUrl}/rest/v1/miner_profits?select=*`, {
       headers: {
         'apikey': supabaseKey,
         'Authorization': `Bearer ${supabaseKey}`,
       },
-      next: { revalidate: 3600 }, // 1 saat cache
+      cache: 'no-store', // Her zaman taze veri çek
     });
     
-    if (!response.ok) return null;
+    console.log("📡 Supabase response status:", response.status);
+    
+    if (!response.ok) {
+      console.log("❌ Supabase response not OK:", response.statusText);
+      return null;
+    }
     
     const data = await response.json();
+    console.log("📦 Supabase data count:", data?.length || 0);
     
     if (data && data.length > 0) {
-      console.log(`📦 Supabase'den ${data.length} miner çekildi`);
+      console.log(`✅ Supabase'den ${data.length} miner çekildi`);
+      // İlk 3 veriyi log'la
+      data.slice(0, 3).forEach((row: any) => {
+        console.log(`   - ${row.name}: $${row.daily_profit_usd}`);
+      });
+      
       return data.map((row: any) => ({
         slug: row.slug,
         name: row.name,
@@ -87,6 +104,7 @@ async function fetchFromSupabase(): Promise<MinerProfitData[] | null> {
       }));
     }
     
+    console.log("⚠️ Supabase'de veri yok!");
     return null;
   } catch (err) {
     console.error("Supabase fetch error:", err);
