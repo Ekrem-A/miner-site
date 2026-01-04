@@ -12,35 +12,17 @@ import {
   CheckCircle,
   AlertCircle
 } from 'lucide-react';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 export default function ContactPage() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    subject: '',
-    message: ''
-  });
+  const { settings, loading } = useSiteSettings();
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setStatus('loading');
-    
-    // Simulate form submission
-    setTimeout(() => {
-      setStatus('success');
-      setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
-      setTimeout(() => setStatus('idle'), 3000);
-    }, 1500);
-  };
+  // WhatsApp numarasını formatla
+  const whatsappNumber = settings.contact_phone?.replace(/[^0-9]/g, '') || '905559725387';
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }));
-  };
+  
+
 
   return (
     <div className="min-h-screen">
@@ -84,7 +66,7 @@ export default function ContactPage() {
                   </div>
                 </div>
                 <a 
-                  href="https://wa.me/905XXXXXXXXX?text=Merhaba,%20bilgi%20almak%20istiyorum."
+                  href={`https://wa.me/${whatsappNumber}?text=Merhaba,%20bilgi%20almak%20istiyorum.`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full py-3 bg-green-500 hover:bg-green-600 text-white rounded-xl font-semibold transition-all flex items-center justify-center gap-2"
@@ -104,8 +86,8 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <p className="font-medium text-white">Telefon</p>
-                    <a href="tel:+902125550000" className="text-gray-400 hover:text-cyan-300 transition-colors">
-                      +90 (212) 555 00 00
+                    <a href={`tel:${settings.contact_phone || '+902125550000'}`} className="text-gray-400 hover:text-cyan-300 transition-colors">
+                      {settings.contact_phone || '+90 (212) 555 00 00'}
                     </a>
                   </div>
                 </div>
@@ -116,8 +98,8 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <p className="font-medium text-white">E-posta</p>
-                    <a href="mailto:info@asicstore.com" className="text-gray-400 hover:text-cyan-300 transition-colors">
-                      info@asicstore.com
+                    <a href={`mailto:${settings.contact_email || 'info@asicstore.com'}`} className="text-gray-400 hover:text-cyan-300 transition-colors">
+                      {settings.contact_email || 'info@asicstore.com'}
                     </a>
                   </div>
                 </div>
@@ -129,8 +111,8 @@ export default function ContactPage() {
                   <div>
                     <p className="font-medium text-white">Adres</p>
                     <p className="text-gray-400">
-                      Maslak Mah. Büyükdere Cad. No:123<br />
-                      Sarıyer / İstanbul, Türkiye
+                      {settings.contact_address || 'Maslak Mah. Büyükdere Cad. No:123'}<br />
+                      {settings.contact_city || 'Sarıyer / İstanbul, Türkiye'}
                     </p>
                   </div>
                 </div>
@@ -142,159 +124,10 @@ export default function ContactPage() {
                   <div>
                     <p className="font-medium text-white">Çalışma Saatleri</p>
                     <p className="text-gray-400">
-                      Pazartesi - Cumartesi<br />
-                      09:00 - 18:00
+                      {settings.business_hours || 'Pazartesi - Cumartesi 09:00 - 18:00'}
                     </p>
                   </div>
                 </div>
-              </div>
-
-              {/* Company Info */}
-              <div className="bg-slate-900/50 border border-cyan-500/20 rounded-2xl p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-cyan-500/10 rounded-lg flex items-center justify-center">
-                    <Building2 className="w-5 h-5 text-cyan-400" />
-                  </div>
-                  <h3 className="font-bold text-lg text-cyan-400">Şirket Bilgileri</h3>
-                </div>
-                <div className="space-y-2 text-sm text-gray-400">
-                  <p><span className="text-gray-500">Ünvan:</span> ASIC Store Teknoloji A.Ş.</p>
-                  <p><span className="text-gray-500">Vergi Dairesi:</span> Maslak V.D.</p>
-                  <p><span className="text-gray-500">Vergi No:</span> 1234567890</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Contact Form */}
-            <div className="lg:col-span-2">
-              <div className="bg-slate-900/50 border border-cyan-500/20 rounded-2xl p-8">
-                <h2 className="text-2xl font-bold text-white mb-2">Bize Yazın</h2>
-                <p className="text-gray-400 mb-8">
-                  Formu doldurun, size en kısa sürede dönüş yapalım.
-                </p>
-
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
-                        Ad Soyad *
-                      </label>
-                      <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
-                        placeholder="Adınız ve soyadınız"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
-                        E-posta *
-                      </label>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
-                        placeholder="ornek@email.com"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label htmlFor="phone" className="block text-sm font-medium text-gray-300 mb-2">
-                        Telefon
-                      </label>
-                      <input
-                        type="tel"
-                        id="phone"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
-                        placeholder="+90 5XX XXX XX XX"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="subject" className="block text-sm font-medium text-gray-300 mb-2">
-                        Konu *
-                      </label>
-                      <select
-                        id="subject"
-                        name="subject"
-                        value={formData.subject}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
-                      >
-                        <option value="" className="bg-slate-800">Konu seçin</option>
-                        <option value="satin-alma" className="bg-slate-800">Satın Alma / Fiyat Bilgisi</option>
-                        <option value="teknik-destek" className="bg-slate-800">Teknik Destek</option>
-                        <option value="hosting" className="bg-slate-800">Hosting Hizmeti</option>
-                        <option value="garanti" className="bg-slate-800">Garanti / İade</option>
-                        <option value="isbirligi" className="bg-slate-800">İş Birliği</option>
-                        <option value="diger" className="bg-slate-800">Diğer</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-300 mb-2">
-                      Mesajınız *
-                    </label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      value={formData.message}
-                      onChange={handleChange}
-                      required
-                      rows={6}
-                      className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all resize-none"
-                      placeholder="Mesajınızı buraya yazın..."
-                    />
-                  </div>
-
-                  <div className="flex items-center gap-4">
-                    <button
-                      type="submit"
-                      disabled={status === 'loading'}
-                      className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white rounded-xl font-semibold transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {status === 'loading' ? (
-                        <>
-                          <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                          Gönderiliyor...
-                        </>
-                      ) : (
-                        <>
-                          <Send className="w-5 h-5" />
-                          Mesaj Gönder
-                        </>
-                      )}
-                    </button>
-
-                    {status === 'success' && (
-                      <div className="flex items-center gap-2 text-green-400">
-                        <CheckCircle className="w-5 h-5" />
-                        <span>Mesajınız başarıyla gönderildi!</span>
-                      </div>
-                    )}
-
-                    {status === 'error' && (
-                      <div className="flex items-center gap-2 text-red-400">
-                        <AlertCircle className="w-5 h-5" />
-                        <span>Bir hata oluştu, lütfen tekrar deneyin.</span>
-                      </div>
-                    )}
-                  </div>
-                </form>
               </div>
             </div>
           </div>
@@ -307,7 +140,7 @@ export default function ContactPage() {
           <h2 className="text-2xl font-bold text-white mb-8 text-center">Bizi Ziyaret Edin</h2>
           <div className="rounded-2xl overflow-hidden border border-cyan-500/20 h-96">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3007.5426799855897!2d29.0168!3d41.1082!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDHCsDA2JzI5LjUiTiAyOcKwMDEnMDAuNSJF!5e0!3m2!1str!2str!4v1234567890"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6938.727205292989!2d29.129481641601025!3d40.92239526746529!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cac7d0f7b6e025%3A0xf2fd936737e8e86c!2sBS%20Bili%C5%9Fim!5e0!3m2!1str!2str!4v1767543937464!5m2!1str!2str"
               width="100%"
               height="100%"
               style={{ border: 0 }}
@@ -316,6 +149,8 @@ export default function ContactPage() {
               referrerPolicy="no-referrer-when-downgrade"
               className="grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition-all duration-500"
             />
+
+            
           </div>
         </div>
       </section>
@@ -365,5 +200,6 @@ export default function ContactPage() {
         </div>
       </section>
     </div>
+    
   );
 }

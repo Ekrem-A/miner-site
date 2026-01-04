@@ -29,6 +29,8 @@ interface SiteSettings {
   mersis_number: string;
   social_facebook?: string;
   social_instagram?: string;
+  social_twitter?: string;
+  social_linkedin?: string;
   created_at?: string;
   updated_at?: string;
 }
@@ -37,16 +39,20 @@ export default function AdminSettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [settings, setSettings] = useState<SiteSettings>({
-    site_name: 'BS Bilişim',
-    site_description: 'Teknoloji Çözümleri',
-    contact_email: 'info@bsbilisim.com',
-    contact_phone: '+90 (555) 555 55 55',
-    contact_address: 'Zeytinburnu, İstanbul',
-    contact_city: 'İstanbul',
-    business_hours: 'Pazartesi - Cumartesi: 09:00 - 18:00',
-    tax_office: 'Zeytinburnu Vergi Dairesi',
-    tax_number: '1234567890',
-    mersis_number: '0123456789012345',
+    site_name: 'Han Bilişim',
+    site_description: 'ASIC Miner Çözümleri',
+    contact_email: '',
+    contact_phone: '',
+    contact_address: '',
+    contact_city: '',
+    business_hours: '',
+    tax_office: '',
+    tax_number: '',
+    mersis_number: '',
+    social_facebook: '',
+    social_instagram: '',
+    social_twitter: '',
+    social_linkedin: '',
   });
 
   useEffect(() => {
@@ -96,6 +102,9 @@ export default function AdminSettingsPage() {
           mersis_number: settings.mersis_number,
           social_facebook: settings.social_facebook,
           social_instagram: settings.social_instagram,
+          social_twitter: settings.social_twitter,
+          social_linkedin: settings.social_linkedin,
+          updated_at: new Date().toISOString(),
         })
         .select()
         .single();
@@ -237,47 +246,7 @@ export default function AdminSettingsPage() {
           </div>
         </div>
 
-        {/* Firma Bilgileri */}
-        <div className="bg-white rounded-xl border border-slate-200 p-6">
-          <div className="flex items-center space-x-3 mb-6">
-            <Building size={24} className="text-cyan-600" />
-            <h2 className="text-xl font-bold text-slate-800">Firma Bilgileri</h2>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Vergi Dairesi</label>
-              <input
-                type="text"
-                value={settings.tax_office}
-                onChange={(e) => setSettings({ ...settings, tax_office: e.target.value })}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-cyan-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Vergi Numarası</label>
-              <input
-                type="text"
-                value={settings.tax_number}
-                onChange={(e) => setSettings({ ...settings, tax_number: e.target.value })}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-cyan-500"
-              />
-            </div>
-
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-slate-700 mb-2">MERSİS Numarası</label>
-              <input
-                type="text"
-                value={settings.mersis_number}
-                onChange={(e) => setSettings({ ...settings, mersis_number: e.target.value })}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-cyan-500"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Sosyal Medya */}
+        {/* Sosyal Medya
         <div className="bg-white rounded-xl border border-slate-200 p-6">
           <div className="flex items-center space-x-3 mb-6">
             <Globe size={24} className="text-cyan-600" />
@@ -306,8 +275,30 @@ export default function AdminSettingsPage() {
                 className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-cyan-500"
               />
             </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Twitter / X</label>
+              <input
+                type="url"
+                value={settings.social_twitter || ''}
+                onChange={(e) => setSettings({ ...settings, social_twitter: e.target.value })}
+                placeholder="https://twitter.com/..."
+                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-cyan-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">LinkedIn</label>
+              <input
+                type="url"
+                value={settings.social_linkedin || ''}
+                onChange={(e) => setSettings({ ...settings, social_linkedin: e.target.value })}
+                placeholder="https://linkedin.com/company/..."
+                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-cyan-500"
+              />
+            </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Save Button */}
         <div className="bg-white rounded-xl border border-slate-200 p-6">

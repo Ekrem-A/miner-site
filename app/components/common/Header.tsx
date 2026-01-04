@@ -2,14 +2,16 @@
 
 import { useState, useEffect } from 'react';
 import { Menu, X, Search } from 'lucide-react';
-
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 import Image from 'next/image';
 
 export function Header() {
-
+    const { settings } = useSiteSettings();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     
+    // WhatsApp numarasını formatla
+    const whatsappNumber = settings.contact_phone?.replace(/[^0-9]/g, '') || '905559725387';
 
     useEffect(() => {
         const handleScroll = () => {
@@ -39,9 +41,9 @@ export function Header() {
                         </div>
                     <div>
                         <h1 className="orbitron text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">
-                        ASIC STORE
+                        {settings.site_name || 'ASIC STORE'}
                         </h1>
-                        <p className="text-xs text-cyan-300/70">Mining Ekipmanları</p>
+                        <p className="text-xs text-cyan-300/70">{settings.site_description || 'Mining Ekipmanları'}</p>
                     </div>
                     </div>
 
@@ -59,7 +61,7 @@ export function Header() {
                         <Search className="w-5 h-5 text-gray-300" />
                     </button>
                     <a 
-                        href="https://wa.me/905XXXXXXXXX?text=Merhaba,%20bilgi%20almak%20istiyorum."
+                        href={`https://wa.me/${whatsappNumber}?text=Merhaba,%20bilgi%20almak%20istiyorum.`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition-all"
@@ -91,7 +93,7 @@ export function Header() {
                     <a href="/contact" className="block text-gray-300 hover:text-cyan-300 font-medium py-2 transition-colors">İletişim</a>
                     <div className="flex items-center space-x-4 pt-4 border-t border-cyan-500/20">
                         <a 
-                            href="https://wa.me/905XXXXXXXXX?text=Merhaba,%20bilgi%20almak%20istiyorum."
+                            href={`https://wa.me/${whatsappNumber}?text=Merhaba,%20bilgi%20almak%20istiyorum.`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex-1 py-3 bg-green-500 hover:bg-green-600 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 text-white"

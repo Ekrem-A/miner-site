@@ -1,34 +1,14 @@
 import { fetchProducts } from '@/lib/getProducts';
+import { fetchMinerProfits, findBestProfitMatch } from '@/lib/getProfitData';
 import Link from 'next/link';
 import { Product } from '@/types';
 import ProductTabs from './ProductTabs';
 import ProductProfitDisplay from './ProductProfitDisplay';
+
+export const revalidate = 3600; // Her saat yeniden oluştur
+
 interface ProductPageProps {
   params: Promise<{ id: string }>;
-}
-
-// ASICMinerValue'dan profit verisini çek
-async function fetchProfitForProduct(brandName: string, productName: string) {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    const searchModel = `${brandName} ${productName}`.trim();
-    const response = await fetch(
-      `${baseUrl}/api/asic-profitability?model=${encodeURIComponent(searchModel)}`,
-      { next: { revalidate: 3600 } }
-    );
-    
-    if (response.ok) {
-      const data = await response.json();
-      if (data.profitPerDayValue) {
-        return data;
-      } else if (data.similar && data.similar.length > 0) {
-        return data.similar[0];
-      }
-    }
-  } catch (e) {
-    console.error('Profit verisi alınamadı:', e);
-  }
-  return null;
 }
 
 export default async function ProductDetailPage({ params }: ProductPageProps) {
@@ -38,18 +18,36 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   let profitData: any = null;
   
   try {
-    const products = await fetchProducts();
+    // Paralel olarak ürünleri ve profit verilerini çek
+    const [products, allProfits] = await Promise.all([
+      fetchProducts(),
+      fetchMinerProfits()
+    ]);
+    
     product = products.find((p) => String(p.id) === id) || null;
-    // İlgili ürünleri bul
+    
     if (product) {
+      // İlgili ürünleri bul
       relatedProducts = products
         .filter((p) => p.category_id === product!.category_id && p.id !== product!.id)
         .slice(0, 3);
       
-      // Profit verisini çek
-      profitData = await fetchProfitForProduct(product.brand, product.name);
+      // Profit verisini eşleştir
+      const fullName = `${product.brand || ''} ${product.name}`.trim();
+      const matchedProfit = findBestProfitMatch(fullName, allProfits);
+      
+      if (matchedProfit) {
+        profitData = {
+          ...matchedProfit,
+          profitPerDayValue: matchedProfit.dailyProfitUsd,
+        };
+        console.log(`✅ Profit matched for ${fullName}: $${matchedProfit.dailyProfitUsd}/day`);
+      } else {
+        console.log(`❌ No profit match for ${fullName}`);
+      }
     }
   } catch (e) {
+    console.error('Veri çekme hatası:', e);
     product = null;
   }
 
@@ -175,7 +173,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
               <div className="flex gap-4">
                 <a 
-                  href={`https://wa.me/905XXXXXXXXX?text=${encodeURIComponent(`Merhaba, ${product.name} ürünü hakkında bilgi almak istiyorum.`)}`}
+                  href={`https://wa.me/XXXXXXXXX?text=${encodeURIComponent(`Merhaba, ${product.name} ürünü hakkında bilgi almak istiyorum.`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex-1 py-4 px-6 rounded-xl font-bold text-lg transition-all bg-green-500 hover:bg-green-600 text-white shadow-lg shadow-green-500/25 text-center flex items-center justify-center gap-2"
