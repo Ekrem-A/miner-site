@@ -5,8 +5,8 @@ const { createClient } = require("@supabase/supabase-js");
 const BASE_URL = "https://www.asicminervalue.com";
 
 // Supabase client
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
   console.error("❌ SUPABASE_URL veya SUPABASE_SERVICE_KEY tanımlı değil!");
