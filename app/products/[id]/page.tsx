@@ -1,65 +1,14 @@
 import { fetchProducts } from '@/lib/getProducts';
+import { fetchMinerProfits, findBestProfitMatch } from '@/lib/getProfitData';
 import Link from 'next/link';
 import { Product } from '@/types';
 import ProductTabs from './ProductTabs';
 import ProductProfitDisplay from './ProductProfitDisplay';
+
+export const revalidate = 3600; // Her saat yeniden oluştur
+
 interface ProductPageProps {
   params: Promise<{ id: string }>;
-}
-
-// ASICMinerValue'dan profit verisini çek
-async function fetchProfitForProduct(brandName: string, productName: string) {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    
-    // Önce tam isimle dene
-    const fullName = `${brandName} ${productName}`.trim();
-    console.log(`🔍 Fetching profit for: ${fullName}`);
-    
-    const response = await fetch(
-      `${baseUrl}/api/asic-profitability?model=${encodeURIComponent(fullName)}`,
-      { next: { revalidate: 3600 }, cache: 'no-store' }
-    );
-    
-    const data = await response.json();
-    
-    if (response.ok && data.profitPerDayValue) {
-      console.log(`✅ Found profit: $${data.profitPerDayValue}/day for ${fullName}`);
-      return data;
-    }
-    
-    // Tam isim bulunamadıysa, sadece ürün adıyla dene
-    if (!response.ok) {
-      const response2 = await fetch(
-        `${baseUrl}/api/asic-profitability?model=${encodeURIComponent(productName)}`,
-        { next: { revalidate: 3600 }, cache: 'no-store' }
-      );
-      
-      const data2 = await response2.json();
-      
-      if (response2.ok && data2.profitPerDayValue) {
-        console.log(`✅ Found profit: $${data2.profitPerDayValue}/day for ${productName}`);
-        return data2;
-      }
-      
-      // Similar sonuçlarını kontrol et
-      if (data2.similar && data2.similar.length > 0) {
-        console.log(`📋 Using similar match: ${data2.similar[0].name}`);
-        return data2.similar[0];
-      }
-    }
-    
-    // Similar sonuçlarını kontrol et
-    if (data.similar && data.similar.length > 0) {
-      console.log(`📋 Using similar match: ${data.similar[0].name}`);
-      return data.similar[0];
-    }
-    
-    console.log(`❌ No profit data found for: ${fullName}`);
-  } catch (e) {
-    console.error('Profit verisi alınamadı:', e);
-  }
-  return null;
 }
 
 export default async function ProductDetailPage({ params }: ProductPageProps) {
@@ -69,18 +18,36 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   let profitData: any = null;
   
   try {
-    const products = await fetchProducts();
+    // Paralel olarak ürünleri ve profit verilerini çek
+    const [products, allProfits] = await Promise.all([
+      fetchProducts(),
+      fetchMinerProfits()
+    ]);
+    
     product = products.find((p) => String(p.id) === id) || null;
-    // İlgili ürünleri bul
+    
     if (product) {
+      // İlgili ürünleri bul
       relatedProducts = products
         .filter((p) => p.category_id === product!.category_id && p.id !== product!.id)
         .slice(0, 3);
       
-      // Profit verisini çek
-      profitData = await fetchProfitForProduct(product.brand, product.name);
+      // Profit verisini eşleştir
+      const fullName = `${product.brand || ''} ${product.name}`.trim();
+      const matchedProfit = findBestProfitMatch(fullName, allProfits);
+      
+      if (matchedProfit) {
+        profitData = {
+          ...matchedProfit,
+          profitPerDayValue: matchedProfit.dailyProfitUsd,
+        };
+        console.log(`✅ Profit matched for ${fullName}: $${matchedProfit.dailyProfitUsd}/day`);
+      } else {
+        console.log(`❌ No profit match for ${fullName}`);
+      }
     }
   } catch (e) {
+    console.error('Veri çekme hatası:', e);
     product = null;
   }
 
