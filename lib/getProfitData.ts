@@ -242,24 +242,28 @@ export function findBestProfitMatch(productName: string, profitData: MinerProfit
   const normalize = (s: string) => s.toLowerCase().replace(/\s+/g, ' ').trim();
   const normalizedProduct = normalize(productName);
   
+  // Tüm veri kaynaklarını birleştir (önce profitData, sonra FALLBACK)
+  const allProfitData = [...profitData, ...FALLBACK_PROFIT_DATA];
+  
   // 1. Birebir isim eşleşmesi
-  for (const miner of profitData) {
+  for (const miner of allProfitData) {
     if (normalize(miner.name) === normalizedProduct) {
+      console.log(`✅ Exact match: ${productName} -> ${miner.name} ($${miner.dailyProfitUsd})`);
       return miner;
     }
   }
   
-  // 2. "Bitmain" prefix'i olmadan eşleşme (ürün "Bitmain Antminer..." olabilir, data "Antminer..." olabilir)
+  // 2. "Bitmain" prefix'i olmadan eşleşme
   const withoutBitmain = normalizedProduct.replace(/^bitmain\s+/i, '');
-  for (const miner of profitData) {
+  for (const miner of allProfitData) {
     const minerWithoutBitmain = normalize(miner.name).replace(/^bitmain\s+/i, '');
     if (minerWithoutBitmain === withoutBitmain) {
+      console.log(`✅ Bitmain-stripped match: ${productName} -> ${miner.name} ($${miner.dailyProfitUsd})`);
       return miner;
     }
   }
   
   // 3. Anahtar model bilgilerini çıkart ve karşılaştır
-  // Örn: "Antminer S21 Pro 234 TH" -> model: s21, variant: pro, hashrate: 234
   const extractKey = (name: string): string => {
     const n = name.toLowerCase();
     
@@ -267,8 +271,8 @@ export function findBestProfitMatch(productName: string, profitData: MinerProfit
     const modelMatch = n.match(/([stzld])(\d+)/);
     const model = modelMatch ? modelMatch[0] : '';
     
-    // Hashrate: 234, 190, 473, vb.
-    const hashMatch = n.match(/(\d{2,3})\s*(th|gh|kh)/i);
+    // Hashrate: 234, 190, 473, 860, 840 vb. (2-4 basamak)
+    const hashMatch = n.match(/(\d{2,4})\s*(th|gh|kh)/i);
     const hash = hashMatch ? hashMatch[1] : '';
     
     // Varyantlar
@@ -279,15 +283,17 @@ export function findBestProfitMatch(productName: string, profitData: MinerProfit
     if (/\bk\s*pro\b/.test(n)) variants.push('kpro');
     if (/hydro|hyd/.test(n)) variants.push('hydro');
     if (/immersion|imm/.test(n)) variants.push('imm');
-    if (/\bexp?\b/.test(n) && /s21.*e/.test(n)) variants.push('e');
+    if (/\be\s*(exp|xp)/.test(n) || /s21\s*e\b/.test(n)) variants.push('e');
     
     return `${model}-${hash}-${variants.sort().join('-')}`;
   };
   
   const productKey = extractKey(productName);
   
-  for (const miner of profitData) {
-    if (extractKey(miner.name) === productKey) {
+  for (const miner of allProfitData) {
+    const minerKey = extractKey(miner.name);
+    if (minerKey === productKey && productKey !== '--') {
+      console.log(`✅ Key match: ${productName} [${productKey}] -> ${miner.name} ($${miner.dailyProfitUsd})`);
       return miner;
     }
   }
@@ -297,17 +303,20 @@ export function findBestProfitMatch(productName: string, profitData: MinerProfit
     const n = name.toLowerCase();
     const modelMatch = n.match(/([stzld])(\d+)/);
     const model = modelMatch ? modelMatch[0] : '';
-    const hashMatch = n.match(/(\d{2,3})\s*(th|gh|kh)/i);
+    const hashMatch = n.match(/(\d{2,4})\s*(th|gh|kh)/i);
     const hash = hashMatch ? hashMatch[1] : '';
     return `${model}-${hash}`;
   };
   
   const productBasic = extractBasic(productName);
-  for (const miner of profitData) {
-    if (extractBasic(miner.name) === productBasic) {
+  for (const miner of allProfitData) {
+    const minerBasic = extractBasic(miner.name);
+    if (minerBasic === productBasic && productBasic !== '-') {
+      console.log(`✅ Basic match: ${productName} [${productBasic}] -> ${miner.name} ($${miner.dailyProfitUsd})`);
       return miner;
     }
   }
   
+  console.log(`❌ No profit match for ${productName} [key: ${productKey}]`);
   return null;
 }
