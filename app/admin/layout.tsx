@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import React, { useEffect, useState, useCallback } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { supabase } from '@/lib/supabase';
@@ -23,51 +23,30 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
 
-  useEffect(() => {
-    checkUser();
-  }, []);
-
-  const checkUser = async () => {
+  const checkUser = useCallback(async () => {
     try {
-      // Supabase ile session kontrolü
-      const { data: { user: authUser }, error } = await supabase.auth.getUser();
-
-      if (error || !authUser) {
-        router.push('/login?redirect=/admin/dashboard');
-        return;
-      }
-
-      // Admin yetkisi kontrolü
-      const { data: profile } = await supabase
-        .from('user_profiles')
-        .select('is_admin, full_name, is_banned')
-        .eq('id', authUser.id)
-        .single();
-
-      if (profile?.is_banned) {
-        await supabase.auth.signOut();
-        router.push('/login?error=banned');
-        return;
-      }
-
-      if (!profile?.is_admin) {
-        router.push('/');
-        return;
-      }
-
-      setUser({
-        id: authUser.id,
-        email: authUser.email,
-        isAdmin: profile?.is_admin || false,
-        fullName: profile?.full_name,
+      // Proxy already handles auth - just get user info for display
+      const response = await fetch('/api/auth/session', {
+        credentials: 'include',
       });
+
+      const data = await response.json();
+      
+      console.log('Admin Layout - Session:', data);
+      
+      if (data.isAuthenticated && data.user) {
+        setUser(data.user);
+      }
     } catch (error) {
-      console.error('Auth check error:', error);
-      router.push('/login?redirect=/admin/dashboard');
+      console.error('Session fetch error:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    checkUser();
+  }, [checkUser]);
 
   const handleLogout = async () => {
     try {
@@ -105,7 +84,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const menuItems = [
     { icon: LayoutDashboard, label: 'Dashboard', href: '/admin/dashboard' },
     { icon: Package, label: 'Ürünler', href: '/admin/products' },
-    { icon: ShoppingBag, label: 'Siparişler', href: '/admin/orders' },
     { icon: Users, label: 'Kullanıcılar', href: '/admin/users' },
     { icon: Settings, label: 'Ayarlar', href: '/admin/settings' },
   ];
@@ -139,7 +117,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Link href="/admin/dashboard" className="flex items-center space-x-3">
             <div className="w-10 h-10 relative">
               <Image
-                src="/bs-logo.png"
+                src="/logo.png"
                 alt="BS Bilişim Logo"
                 width={40}
                 height={40}
@@ -211,11 +189,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
         </header>
 
-        {/* Page Content */}
-        <main className="p-6">
-          {children}
-        </main>
+          {/* Page Content */}
+          <main className="p-6">
+            {children}
+          </main>
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }

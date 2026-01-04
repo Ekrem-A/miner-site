@@ -6,12 +6,11 @@ import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { validateEmail, checkRateLimit } from '@/lib/validation';
-import supabase from '@/lib/supabase';
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectUrl = searchParams.get('redirect') || '/admin';
+  const redirectUrl = searchParams.get('redirect') || '/admin/dashboard';
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -25,26 +24,15 @@ function LoginForm() {
     rememberMe: false,
   });
 
-
-  // Check if user is already logged in
-   useEffect(() => {
-    const checkSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      if (data.session && data.session.user) {
-        router.replace('/admin');
-      }
-    };
-    checkSession();
-  }, [router]);
+  // Session check disabled - handled by admin layout
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setSuccess('');
-
     
     // Rate limiting check
-    if (!checkRateLimit('login', 5, 300000)) {
+    if (!checkRateLimit('login', 5, 300000)) { // 5 attempts per 5 minutes
       setError('Çok fazla giriş denemesi. Lütfen 5 dakika sonra tekrar deneyin.');
       return;
     }
@@ -55,6 +43,8 @@ function LoginForm() {
       setError('Geçerli bir e-posta adresi girin');
       return;
     }
+
+    // Validate password
     if (formData.password.length < 6) {
       setError('Şifre en az 6 karakter olmalıdır');
       return;
@@ -64,48 +54,60 @@ function LoginForm() {
     setLoadingMessage('Giriş yapılıyor...');
 
     try {
-      const { error: loginError } = await supabase.auth.signInWithPassword({
-        email: sanitizedEmail,
-        password: formData.password,
+      // API route'u kullan
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: sanitizedEmail,
+          password: formData.password,
+        }),
       });
 
-      if (loginError) {
-        setError(loginError.message || 'Giriş yapılırken bir hata oluştu');
-        setLoadingMessage('');
-        return;
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Giriş yapılırken bir hata oluştu');
       }
 
-      setSuccess('Giriş başarılı! Yönlendiriliyorsunuz...');
-      setLoadingMessage('');
-      setTimeout(() => {
-        window.location.href = redirectUrl;
-      }, 1000);
-    } catch (err: any) {
-      setError(err.message || 'Giriş yapılırken bir hata oluştu');
+      if (data.success) {
+        setSuccess('Giriş başarılı! Yönlendiriliyorsunuz...');
+        setLoadingMessage('Admin paneline yönlendiriliyorsunuz...');
+        
+        console.log('Login successful, response:', data);
+        console.log('Is Admin:', data.user?.isAdmin);
+        
+        // Determine redirect URL - admin users always go to dashboard
+        const targetUrl = data.user?.isAdmin ? '/admin/dashboard' : '/';
+        console.log('Redirecting to:', targetUrl);
+        
+        // Wait for cookies to be fully set
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Force hard navigation with replace to prevent back button issues
+        window.location.replace(targetUrl);
+      }
+    } catch (error: any) {
+      console.error('Login error:', error);
+      setError(error.message || 'Giriş yapılırken bir hata oluştu');
       setLoadingMessage('');
     } finally {
       setLoading(false);
     }
   };
 
-const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
     const newValue = type === 'checkbox' ? checked : value;
-
+    
     setFormData(prev => ({
       ...prev,
       [name]: newValue
     }));
     setError('');
     setSuccess('');
-
-    if (name === 'email' && typeof newValue === 'string') {
-      if (newValue.trim() && !validateEmail(newValue.trim())) {
-        setEmailError('Geçerli bir e-posta adresi girin');
-      } else {
-        setEmailError('');
-      }
-    }
     
     // Real-time validation
     if (name === 'email' && typeof newValue === 'string') {
@@ -154,8 +156,8 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             </div>
           </div>
           <div>
-            <h1 className="text-2xl font-black text-white tracking-wide group-hover:text-cyan-400 transition-colors duration-300">HAN BİLİŞİM</h1>
-            <p className="text-sm text-cyan-400 font-semibold uppercase tracking-wider">ASIC Çözümleri</p>
+            <h1 className="text-2xl font-black text-white tracking-wide group-hover:text-cyan-400 transition-colors duration-300">BS BİLİŞİM</h1>
+            <p className="text-sm text-cyan-400 font-semibold uppercase tracking-wider">Teknoloji Çözümleri</p>
           </div>
         </Link>
 
@@ -292,6 +294,16 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                 </div>
               </button>
             </form>
+
+            {/* Sign Up Link */}
+            <div className="mt-8 text-center pt-6 border-t border-gray-700/50">
+              <p className="text-gray-400 text-sm font-medium">
+                Hesabınız yok mu?{' '}
+                <Link href="/register" className="text-cyan-400 hover:text-cyan-300 font-bold transition-colors uppercase tracking-wide">
+                  Kayıt Olun
+                </Link>
+              </p>
+            </div>
           </div>
         </div>
 

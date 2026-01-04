@@ -23,10 +23,10 @@ export function Footer() {
             <div>
               <h4 className="font-bold text-lg mb-4 text-cyan-300">Hızlı Erişim</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-cyan-300 transition-colors">Anasayfa</a></li>
-                <li><a href="#" className="hover:text-cyan-300 transition-colors">Ürünler</a></li>
-                <li><a href="#" className="hover:text-cyan-300 transition-colors">Hakkımızda</a></li>
-                <li><a href="#" className="hover:text-cyan-300 transition-colors">İletişim</a></li>
+                <li><a href="/" className="hover:text-cyan-300 transition-colors">Anasayfa</a></li>
+                <li><a href="/products" className="hover:text-cyan-300 transition-colors">Ürünler</a></li>
+                <li><a href="/mining" className="hover:text-cyan-300 transition-colors">Mining</a></li>
+                <li><a href="/contact" className="hover:text-cyan-300 transition-colors">İletişim</a></li>
               </ul>
             </div>
 

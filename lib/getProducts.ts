@@ -3,16 +3,9 @@ import { Product } from '@/types';
 import { Cloudinary } from '@cloudinary/url-gen';
 import { fill } from '@cloudinary/url-gen/actions/resize';
 
-function formatPriceTurkish(value: number | null | undefined): string {
-  if (value === null || value === undefined) return '';
-  // Ensure two decimals
-  const fixed = value.toFixed(2);
-  // Replace decimal point with comma and add thousand separators with dot
-  const parts = fixed.split('.');
-  const intPart = parts[0];
-  const decPart = parts[1];
-  const withThousand = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-  return `${withThousand},${decPart}`;
+// Türk Lirası formatında fiyat
+function formatPriceTurkish(price: number): string {
+  return price.toLocaleString('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
 }
 
 export async function fetchProducts(): Promise<Product[]> {
@@ -35,7 +28,7 @@ export async function fetchProducts(): Promise<Product[]> {
   const { data, error } = await supabase
     .from('products')
     .select(
-      `id, name, brand, price, original_price, description, image_urls, in_stock, rating, review_count, specs, tags, featured, category_id, is_campaign, discount_percentage, campaign_end_date`
+      `id, name, slug, brand, price, original_price, description, image_urls, in_stock, stock_quantity, rating, review_count, specs, tags, featured, category_id, discount_percentage`
     )
     .order('created_at', { ascending: false });
 
@@ -91,21 +84,21 @@ export async function fetchProducts(): Promise<Product[]> {
       id: p.id,
       name: p.name,
       brand: p.brand,
-      price: formatPriceTurkish(priceNumber),
-      originalPrice: originalPriceNumber !== null ? formatPriceTurkish(originalPriceNumber) : undefined,
+      price: priceNumber !== null ? formatPriceTurkish(priceNumber) : '0',
+      original_price: originalPriceNumber !== null ? formatPriceTurkish(originalPriceNumber) : undefined,
       image: imageUrls.length > 0 ? imageUrls[0] : '',
       image_urls: imageUrls.length > 0 ? imageUrls : undefined,
       category: categoryInfo ? categoryInfo.slug || categoryInfo.name : '',
+      category_id: p.category_id || undefined,
       featured: !!p.featured,
       description: p.description || undefined,
-      inStock: p.in_stock ?? true,
+      in_stock: p.in_stock ?? true,
+      stock_quantity: p.stock_quantity ?? undefined,
       rating: p.rating ?? undefined,
-      reviewCount: p.review_count ?? undefined,
+      review_count: p.review_count ?? undefined,
       specs: p.specs ?? undefined,
       tags: p.tags ?? undefined,
-      is_campaign: p.is_campaign ?? false,
-      discount_percentage: p.discount_percentage ?? undefined,
-      campaign_end_date: p.campaign_end_date ?? undefined,
+      slug: p.slug ?? undefined,
     } as Product;
   });
 

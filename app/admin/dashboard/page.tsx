@@ -2,33 +2,18 @@
 
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Package, ShoppingBag, Users, TrendingUp } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { Package, ShoppingBag, TrendingUp } from 'lucide-react';
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
     totalProducts: 0,
     totalOrders: 0,
-    totalUsers: 0,
     totalRevenue: 0,
   });
-const router = useRouter();
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    const checkSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      if (!data.session || !data.session.user) {
-        router.replace('/login');
-      } else {
-        setLoading(false);
-      }
-    };
-    checkSession();
-  }, [router]);
 
-  if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Yükleniyor...</div>;
-  }
+  useEffect(() => {
+    loadStats();
+  }, []);
 
   const loadStats = async () => {
     try {
@@ -42,11 +27,6 @@ const router = useRouter();
         .from('orders')
         .select('*', { count: 'exact', head: true });
 
-      // Get total users
-      const { count: usersCount } = await supabase
-        .from('user_profiles')
-        .select('*', { count: 'exact', head: true });
-
       // Get total revenue
       const { data: orders } = await supabase
         .from('orders')
@@ -57,7 +37,6 @@ const router = useRouter();
       setStats({
         totalProducts: productsCount || 0,
         totalOrders: ordersCount || 0,
-        totalUsers: usersCount || 0,
         totalRevenue: revenue,
       });
     } catch (error) {
@@ -77,12 +56,6 @@ const router = useRouter();
       label: 'Toplam Sipariş',
       value: stats.totalOrders,
       color: 'from-green-500 to-emerald-500',
-    },
-    {
-      icon: Users,
-      label: 'Toplam Kullanıcı',
-      value: stats.totalUsers,
-      color: 'from-purple-500 to-pink-500',
     },
     {
       icon: TrendingUp,
