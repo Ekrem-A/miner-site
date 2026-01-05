@@ -34,7 +34,7 @@ export default function ProductCard({ product, idx }: ProductCardProps) {
       href={`/products/${product.id}`} 
       className={`product-card card-glow rounded-2xl overflow-hidden glow-hover fade-in stagger-${(idx % 6) + 1} cursor-pointer block group relative`}
     >
-      <div className="relative h-64 bg-slate-900/50 overflow-hidden">
+      <div className="relative h-100 bg-slate-900/50 overflow-hidden">
         <img 
           src={product.image_urls?.[0] || product.image || '/placeholder.png'} 
           alt={product.name}

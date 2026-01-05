@@ -6,7 +6,7 @@ import { Pickaxe, Zap, TrendingUp, Shield } from 'lucide-react';
 
 export default function MiningPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <div className="min-h-screen bg-gradient-to-br from-slate-800 via-slate-700 to-cyan-800">
       <Header />
       
       <main className="pt-24 pb-20">
@@ -26,39 +26,39 @@ export default function MiningPage() {
 
           {/* Features Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-            <div className="bg-slate-800/50 border border-cyan-500/20 rounded-2xl p-6 hover:border-cyan-500/40 transition-colors">
+            <div className="bg-slate-700/60 border border-cyan-500/30 rounded-2xl p-6 hover:border-cyan-500/50 transition-colors backdrop-blur-sm">
               <div className="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center mb-4">
                 <TrendingUp className="w-6 h-6 text-green-400" />
               </div>
               <h3 className="text-xl font-bold text-white mb-2">Karlılık Hesaplama</h3>
-              <p className="text-gray-400">
+              <p className="text-gray-300">
                 Elektrik maliyeti, hashrate ve coin fiyatına göre günlük kazancınızı hesaplayın.
               </p>
             </div>
 
-            <div className="bg-slate-800/50 border border-cyan-500/20 rounded-2xl p-6 hover:border-cyan-500/40 transition-colors">
+            <div className="bg-slate-700/60 border border-cyan-500/30 rounded-2xl p-6 hover:border-cyan-500/50 transition-colors backdrop-blur-sm">
               <div className="w-12 h-12 bg-yellow-500/20 rounded-xl flex items-center justify-center mb-4">
                 <Zap className="w-6 h-6 text-yellow-400" />
               </div>
               <h3 className="text-xl font-bold text-white mb-2">Enerji Verimliliği</h3>
-              <p className="text-gray-400">
+              <p className="text-gray-300">
                 En verimli ASIC cihazlarını seçerek elektrik maliyetlerinizi minimize edin.
               </p>
             </div>
 
-            <div className="bg-slate-800/50 border border-cyan-500/20 rounded-2xl p-6 hover:border-cyan-500/40 transition-colors">
+            <div className="bg-slate-700/60 border border-cyan-500/30 rounded-2xl p-6 hover:border-cyan-500/50 transition-colors backdrop-blur-sm">
               <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center mb-4">
                 <Shield className="w-6 h-6 text-blue-400" />
               </div>
               <h3 className="text-xl font-bold text-white mb-2">Güvenli Yatırım</h3>
-              <p className="text-gray-400">
+              <p className="text-gray-300">
                 Orijinal ve garantili ürünlerle güvenli madencilik yatırımı yapın.
               </p>
             </div>
           </div>
 
           {/* Info Section */}
-          <div className="bg-slate-800/30 border border-cyan-500/20 rounded-2xl p-8">
+          <div className="bg-slate-700/50 border border-cyan-500/30 rounded-2xl p-8 backdrop-blur-sm">
             <h2 className="orbitron text-2xl font-bold text-cyan-400 mb-6">Madenciliğe Başlarken</h2>
             <div className="space-y-4 text-gray-300">
               <p>
