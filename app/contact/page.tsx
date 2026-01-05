@@ -190,10 +190,6 @@ export default function ContactPage() {
                 a: 'Stokta bulunan ürünler genellikle 1-3 iş günü içinde kargoya verilir. Yurt içi teslimatlar ortalama 2-5 iş günü sürmektedir.'
               },
               {
-                q: 'Hosting hizmeti nedir?',
-                a: 'Hosting hizmeti, satın aldığınız madencilik cihazlarını bizim profesyonel tesislerimizde barındırma imkanı sunar. Elektrik, soğutma, bakım ve 7/24 izleme dahildir.'
-              },
-              {
                 q: 'Garanti süreci nasıl işliyor?',
                 a: 'Tüm ürünlerimiz üretici garantisi kapsamındadır. Garanti süresi içinde oluşabilecek arızalarda ücretsiz onarım veya değişim yapılmaktadır.'
               },

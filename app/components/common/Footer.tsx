@@ -1,6 +1,7 @@
 'use client';
 
-import { Zap, Facebook, Instagram, Twitter, Linkedin } from 'lucide-react';
+import Image from 'next/image';
+import { Facebook, Instagram, Twitter, Linkedin } from 'lucide-react';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 export function Footer() {
@@ -14,37 +15,17 @@ export function Footer() {
             {/* Company Info */}
             <div>
               <div className="flex items-center space-x-3 mb-4">
-                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center">
-                  <Zap className="w-6 h-6 text-white" strokeWidth={2.5} />
-                </div>
-                <h3 className="orbitron text-xl font-black text-cyan-400">{settings.site_name || 'ASIC STORE'}</h3>
+                <Image 
+                  src="/logo.png" 
+                  alt={settings.site_name || 'Logo'} 
+                  width={180} 
+                  height={50}
+                  className="h-12 w-auto"
+                />
               </div>
               <p className="text-gray-400 text-sm">
                 {settings.site_description || "Türkiye'nin en güvenilir kripto madencilik ekipmanları tedarikçisi."}
               </p>
-              {/* Social Media Links */}
-              <div className="flex space-x-4 mt-4">
-                {settings.social_facebook && (
-                  <a href={settings.social_facebook} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-cyan-300 transition-colors">
-                    <Facebook className="w-5 h-5" />
-                  </a>
-                )}
-                {settings.social_instagram && (
-                  <a href={settings.social_instagram} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-cyan-300 transition-colors">
-                    <Instagram className="w-5 h-5" />
-                  </a>
-                )}
-                {settings.social_twitter && (
-                  <a href={settings.social_twitter} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-cyan-300 transition-colors">
-                    <Twitter className="w-5 h-5" />
-                  </a>
-                )}
-                {settings.social_linkedin && (
-                  <a href={settings.social_linkedin} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-cyan-300 transition-colors">
-                    <Linkedin className="w-5 h-5" />
-                  </a>
-                )}
-              </div>
             </div>
 
             {/* Quick Links */}
