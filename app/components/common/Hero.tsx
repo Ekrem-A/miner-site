@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ChevronRight, Zap, Shield, TrendingUp, Award } from "lucide-react";
 
 
@@ -41,13 +42,13 @@ export function Hero() {
               Yüksek hashrate, düşük enerji tüketimi, maksimum karlılık.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <button className="animated-gradient px-8 py-4 rounded-full font-bold text-lg flex items-center space-x-2 glow-hover">
+              <Link href="/products" className="animated-gradient px-8 py-4 rounded-full font-bold text-lg flex items-center space-x-2 glow-hover">
                 <span>Ürünleri İncele</span>
                 <ChevronRight className="w-5 h-5" />
-              </button>
-              <button className="border-2 border-cyan-500 px-8 py-4 rounded-full font-bold text-lg hover:bg-cyan-500/10 transition-colors">
+              </Link>
+              <Link href="/mining" className="border-2 border-cyan-500 px-8 py-4 rounded-full font-bold text-lg hover:bg-cyan-500/10 transition-colors">
                 Daha Fazla Bilgi
-              </button>
+              </Link>
             </div>
           </div>
 
