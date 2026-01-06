@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Product } from '@/types';
 import ProductTabs from './ProductTabs';
 import ProductProfitDisplay from './ProductProfitDisplay';
+import ProductGallery from './ProductGallery';
 
 export const revalidate = 3600; // Her saat yeniden oluştur
 
@@ -85,42 +86,12 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12">
             {/* Sol: Görsel Galerisi */}
-            <div className="space-y-4">
-              <div className="relative aspect-square bg-gray-50 rounded-2xl overflow-hidden border border-gray-200">
-                <img
-                  src={images[0]}
-                  alt={product.name}
-                  className="w-full h-full object-cover"
-                />
-                {product.discount_percentage && (
-                  <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                    %{product.discount_percentage} İNDİRİM
-                  </div>
-                )}
-                <div className="absolute top-4 right-4">
-                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                    product.in_stock ? "bg-green-500" : "bg-red-500"
-                  } text-white`}>
-                    {product.in_stock ? "Stokta" : "Tükendi"}
-                  </span>
-                </div>
-              </div>
-              
-              {images.length > 1 && (
-                <div className="grid grid-cols-4 gap-3">
-                  {images.map((img: string, idx: number) => (
-                    <div 
-                      key={idx} 
-                      className={`aspect-square bg-gray-50 rounded-xl overflow-hidden border-2 cursor-pointer transition-all hover:border-cyan-400 ${
-                        idx === 0 ? 'border-cyan-500' : 'border-gray-200'
-                      }`}
-                    >
-                      <img src={img} alt={`${product.name} ${idx + 1}`} className="w-full h-full object-cover" />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <ProductGallery 
+              images={images}
+              productName={product.name}
+              discountPercentage={product.discount_percentage}
+              inStock={product.in_stock}
+            />
 
             {/* Sağ: Temel Bilgiler */}
             <div className="space-y-6">
