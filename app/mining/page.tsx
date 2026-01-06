@@ -6,20 +6,20 @@ import { Pickaxe, Zap, TrendingUp, Shield } from 'lucide-react';
 
 export default function MiningPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-800 via-slate-700 to-cyan-800">
+    <div className="min-h-screen bg-white">
       <Header />
       
       <main className="pt-24 pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Hero Section */}
           <div className="text-center mb-16">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-cyan-500/20 rounded-2xl mb-6">
-              <Pickaxe className="w-10 h-10 text-cyan-400" />
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-cyan-100 rounded-2xl mb-6">
+              <Pickaxe className="w-10 h-10 text-cyan-600" />
             </div>
-            <h1 className="orbitron text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-linear-to-r from-cyan-400 to-blue-500 mb-4">
+            <h1 className="orbitron text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-linear-to-r from-cyan-500 to-blue-600 mb-4">
               MADENCİLİK REHBERİ
             </h1>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
               Kripto para madenciliği hakkında bilmeniz gereken her şey
             </p>
           </div>
@@ -46,35 +46,35 @@ export default function MiningPage() {
               </p>
             </div>
 
-            <div className="bg-slate-700/60 border border-cyan-500/30 rounded-2xl p-6 hover:border-cyan-500/50 transition-colors backdrop-blur-sm">
-              <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center mb-4">
-                <Shield className="w-6 h-6 text-blue-400" />
+            <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6 hover:border-cyan-300 transition-colors">
+              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
+                <Shield className="w-6 h-6 text-blue-600" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-2">Güvenli Yatırım</h3>
-              <p className="text-gray-300">
+              <h3 className="text-xl font-bold text-gray-800 mb-2">Güvenli Yatırım</h3>
+              <p className="text-gray-600">
                 Orijinal ve garantili ürünlerle güvenli madencilik yatırımı yapın.
               </p>
             </div>
           </div>
 
           {/* Info Section */}
-          <div className="bg-slate-700/50 border border-cyan-500/30 rounded-2xl p-8 backdrop-blur-sm">
-            <h2 className="orbitron text-2xl font-bold text-cyan-400 mb-6">Madenciliğe Başlarken</h2>
-            <div className="space-y-4 text-gray-300">
+          <div className="bg-gray-50 border border-gray-200 rounded-2xl p-8">
+            <h2 className="orbitron text-2xl font-bold text-cyan-600 mb-6">Madenciliğe Başlarken</h2>
+            <div className="space-y-4 text-gray-600">
               <p>
-                <strong className="text-white">1. Doğru Cihazı Seçin:</strong> Hangi kripto parayı kazacağınıza karar verin. 
+                <strong className="text-gray-800">1. Doğru Cihazı Seçin:</strong> Hangi kripto parayı kazacağınıza karar verin. 
                 Bitcoin için SHA-256, Litecoin/Dogecoin için Scrypt, Zcash için Equihash algoritması kullanan cihazlar gereklidir.
               </p>
               <p>
-                <strong className="text-white">2. Elektrik Maliyetini Hesaplayın:</strong> Madencilikte en büyük gider elektrik maliyetidir. 
+                <strong className="text-gray-800">2. Elektrik Maliyetini Hesaplayın:</strong> Madencilikte en büyük gider elektrik maliyetidir. 
                 Türkiye'de ortalama 0.10$/kWh civarında elektrik maliyeti vardır.
               </p>
               <p>
-                <strong className="text-white">3. Havuz Seçimi:</strong> Solo madencilik yerine havuz madenciliği tercih edin. 
+                <strong className="text-gray-800">3. Havuz Seçimi:</strong> Solo madencilik yerine havuz madenciliği tercih edin. 
                 F2Pool, ViaBTC, AntPool gibi güvenilir havuzları değerlendirebilirsiniz.
               </p>
               <p>
-                <strong className="text-white">4. Soğutma ve Gürültü:</strong> ASIC cihazları yüksek ısı ve gürültü üretir. 
+                <strong className="text-gray-800">4. Soğutma ve Gürültü:</strong> ASIC cihazları yüksek ısı ve gürültü üretir. 
                 Uygun bir ortam hazırladığınızdan emin olun.
               </p>
             </div>
