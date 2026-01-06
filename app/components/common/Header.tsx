@@ -23,14 +23,14 @@ export function Header() {
 
     return (
         <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-                scrolled ? 'bg-slate-950/95 backdrop-blur-lg shadow-lg shadow-cyan-500/10' : 'bg-transparent'
+                scrolled ? 'bg-white/95 backdrop-blur-lg shadow-lg' : 'bg-white'
             }`}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-20">
                     {/* Logo */}
                     <div className="flex items-center space-x-3">
                     <div className="flex items-center space-x-3">
-                            <div className="w-36 h-15 rounded-xl bg-gradient-to-b flex items-center justify-center glow">
+                            <div className="w-36 h-15 rounded-xl bg-gradient-to-b flex items-center justify-center">
                                 <Image
                                 src="/logo.png"
                                 alt="Logo"
@@ -40,25 +40,25 @@ export function Header() {
                             </div>
                         </div>
                     <div>
-                        <h1 className="orbitron text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">
+                        <h1 className="orbitron text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600">
                         {settings.site_name || 'ASIC STORE'}
                         </h1>
-                        <p className="text-xs text-cyan-300/70">{settings.site_description || 'Mining Ekipmanları'}</p>
+                        <p className="text-xs text-gray-500">{settings.site_description || 'Mining Ekipmanları'}</p>
                     </div>
                     </div>
 
                     {/* Desktop Navigation */}
                     <nav className="hidden md:flex items-center space-x-8">
-                    <a href="/" className="text-cyan-300 hover:text-cyan-200 font-medium transition-colors">Anasayfa</a>
-                    <a href="/products" className="text-gray-300 hover:text-cyan-300 font-medium transition-colors">Ürünler</a>
-                    <a href="/mining" className="text-gray-300 hover:text-cyan-300 font-medium transition-colors">Mining</a>
-                    <a href="/contact" className="text-gray-300 hover:text-cyan-300 font-medium transition-colors">İletişim</a>
+                    <a href="/" className="text-cyan-600 hover:text-cyan-500 font-medium transition-colors">Anasayfa</a>
+                    <a href="/products" className="text-gray-600 hover:text-cyan-600 font-medium transition-colors">Ürünler</a>
+                    <a href="/mining" className="text-gray-600 hover:text-cyan-600 font-medium transition-colors">Mining</a>
+                    <a href="/contact" className="text-gray-600 hover:text-cyan-600 font-medium transition-colors">İletişim</a>
                     </nav>
 
                     {/* Action Buttons */}
                     <div className="hidden md:flex items-center space-x-4">
-                    <button className="p-2 hover:bg-cyan-500/10 rounded-lg transition-colors">
-                        <Search className="w-5 h-5 text-gray-300" />
+                    <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                        <Search className="w-5 h-5 text-gray-600" />
                     </button>
                     <a 
                         href={`https://wa.me/${whatsappNumber}?text=Merhaba,%20bilgi%20almak%20istiyorum.`}
@@ -85,13 +85,13 @@ export function Header() {
 
                 {/* Mobile Menu */}
                 {mobileMenuOpen && (
-                <div className="md:hidden bg-slate-950/98 backdrop-blur-xl border-t border-cyan-500/20">
+                <div className="md:hidden bg-white/98 backdrop-blur-xl border-t border-gray-200">
                     <div className="px-4 py-6 space-y-4">
-                    <a href="/" className="block text-cyan-300 hover:text-cyan-200 font-medium py-2 transition-colors">Anasayfa</a>
-                    <a href="/products" className="block text-gray-300 hover:text-cyan-300 font-medium py-2 transition-colors">Ürünler</a>
-                    <a href="/mining" className="block text-gray-300 hover:text-cyan-300 font-medium py-2 transition-colors">Mining</a>
-                    <a href="/contact" className="block text-gray-300 hover:text-cyan-300 font-medium py-2 transition-colors">İletişim</a>
-                    <div className="flex items-center space-x-4 pt-4 border-t border-cyan-500/20">
+                    <a href="/" className="block text-cyan-600 hover:text-cyan-500 font-medium py-2 transition-colors">Anasayfa</a>
+                    <a href="/products" className="block text-gray-600 hover:text-cyan-600 font-medium py-2 transition-colors">Ürünler</a>
+                    <a href="/mining" className="block text-gray-600 hover:text-cyan-600 font-medium py-2 transition-colors">Mining</a>
+                    <a href="/contact" className="block text-gray-600 hover:text-cyan-600 font-medium py-2 transition-colors">İletişim</a>
+                    <div className="flex items-center space-x-4 pt-4 border-t border-gray-200">
                         <a 
                             href={`https://wa.me/${whatsappNumber}?text=Merhaba,%20bilgi%20almak%20istiyorum.`}
                             target="_blank"

@@ -54,10 +54,10 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   if (!product) {
     return (
       
-      <div className="min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-400 mb-4">Ürün Bulunamadı</h1>
-          <Link href="/products" className="text-cyan-400 hover:text-cyan-300 transition-colors">
+          <h1 className="text-4xl font-bold text-gray-600 mb-4">Ürün Bulunamadı</h1>
+          <Link href="/products" className="text-cyan-600 hover:text-cyan-500 transition-colors">
             ← Ürünlere Dön
           </Link>
         </div>
@@ -68,15 +68,15 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   const images = product.image_urls || [product.image || '/placeholder.png'];
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900">
+    <div className="min-h-screen bg-white">
       {/* Breadcrumb */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <nav className="flex items-center space-x-2 text-sm text-gray-400">
-          <Link href="/" className="hover:text-cyan-400 transition-colors">Ana Sayfa</Link>
+        <nav className="flex items-center space-x-2 text-sm text-gray-500">
+          <Link href="/" className="hover:text-cyan-600 transition-colors">Ana Sayfa</Link>
           <span>/</span>
-          <Link href="/products" className="hover:text-cyan-400 transition-colors">Ürünler</Link>
+          <Link href="/products" className="hover:text-cyan-600 transition-colors">Ürünler</Link>
           <span>/</span>
-          <span className="text-cyan-400">{product.name}</span>
+          <span className="text-cyan-600">{product.name}</span>
         </nav>
       </div>
 
@@ -86,7 +86,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
           <div className="grid lg:grid-cols-2 gap-12">
             {/* Sol: Görsel Galerisi */}
             <div className="space-y-4">
-              <div className="relative aspect-square bg-slate-800/50 rounded-2xl overflow-hidden border border-cyan-500/20">
+              <div className="relative aspect-square bg-gray-50 rounded-2xl overflow-hidden border border-gray-200">
                 <img
                   src={images[0]}
                   alt={product.name}
@@ -111,8 +111,8 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                   {images.map((img: string, idx: number) => (
                     <div 
                       key={idx} 
-                      className={`aspect-square bg-slate-800/50 rounded-xl overflow-hidden border-2 cursor-pointer transition-all hover:border-cyan-400 ${
-                        idx === 0 ? 'border-cyan-500' : 'border-transparent'
+                      className={`aspect-square bg-gray-50 rounded-xl overflow-hidden border-2 cursor-pointer transition-all hover:border-cyan-400 ${
+                        idx === 0 ? 'border-cyan-500' : 'border-gray-200'
                       }`}
                     >
                       <img src={img} alt={`${product.name} ${idx + 1}`} className="w-full h-full object-cover" />
@@ -125,8 +125,8 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
             {/* Sağ: Temel Bilgiler */}
             <div className="space-y-6">
               <div>
-                <p className="text-cyan-400 text-sm font-semibold uppercase tracking-wider mb-2">{product.brand}</p>
-                <h1 className="orbitron text-3xl md:text-4xl font-bold text-white mb-4">{product.name}</h1>
+                <p className="text-cyan-600 text-sm font-semibold uppercase tracking-wider mb-2">{product.brand}</p>
+                <h1 className="orbitron text-3xl md:text-4xl font-bold text-gray-800 mb-4">{product.name}</h1>
                 
                 {/* Günlük Kar Gösterimi */}
                 {profitData && (
@@ -136,7 +136,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                 {product.tags && product.tags.length > 0 && (
                   <div className="flex flex-wrap gap-2 mb-4">
                     {product.tags.map((tag: string, idx: number) => (
-                      <span key={idx} className="px-3 py-1 bg-slate-700/50 text-gray-300 text-xs rounded-full">
+                      <span key={idx} className="px-3 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
                         {tag}
                       </span>
                     ))}
@@ -144,31 +144,31 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                 )}
               </div>
 
-              <div className="bg-slate-800/50 rounded-xl p-6 border border-cyan-500/20">
+              <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
                 <div className="flex items-end gap-4">
                   {product.original_price && (
-                    <span className="text-2xl text-gray-500 line-through">
+                    <span className="text-2xl text-gray-400 line-through">
                       {product.original_price} ₺
                     </span>
                   )}
-                  <span className="orbitron text-4xl font-bold text-cyan-400">
+                  <span className="orbitron text-4xl font-bold text-cyan-600">
                     {product.price} ₺
                   </span>
                 </div>
-                <p className="text-gray-400 text-sm mt-2">KDV Dahil</p>
+                <p className="text-gray-500 text-sm mt-2">KDV Dahil</p>
               </div>
 
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
                   <div className={`w-3 h-3 rounded-full ${product.in_stock ? 'bg-green-500' : 'bg-red-500'}`}></div>
-                  <span className="text-gray-300">
+                  <span className="text-gray-600">
                     {product.in_stock ? `${product.stock_quantity || 0} adet stokta` : 'Stokta yok'}
                   </span>
                 </div>
               </div>
 
               {product.description && (
-                <p className="text-gray-300 leading-relaxed">{product.description}</p>
+                <p className="text-gray-600 leading-relaxed">{product.description}</p>
               )}
 
               <div className="flex gap-4">
@@ -183,14 +183,14 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                   </svg>
                   WhatsApp ile İletişime Geç
                 </a>
-                <button className="py-4 px-6 rounded-xl font-bold text-lg bg-slate-700 hover:bg-slate-600 text-white transition-all">
+                <button className="py-4 px-6 rounded-xl font-bold text-lg bg-gray-100 hover:bg-gray-200 text-gray-600 transition-all">
                   ❤️
                 </button>
               </div>
 
-              <div className="bg-slate-800/30 rounded-xl p-4 border border-slate-700">
-                <p className="text-gray-400 text-sm">
-                  📞 Sipariş ve bilgi için: <span className="text-cyan-400 font-semibold">+90 XXX XXX XX XX</span>
+              <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                <p className="text-gray-600 text-sm">
+                  📞 Sipariş ve bilgi için: <span className="text-cyan-600 font-semibold">+90 XXX XXX XX XX</span>
                 </p>
               </div>
             </div>
@@ -218,10 +218,10 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
       {/* SECTION 3: Benzer Ürünler */}
       {relatedProducts.length > 0 && (
-        <section className="py-12 bg-slate-800/30">
+        <section className="py-12 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="orbitron text-2xl md:text-3xl font-bold text-white mb-8 flex items-center gap-3">
-              <span className="text-cyan-400">🔗</span> Benzer Ürünler
+            <h2 className="orbitron text-2xl md:text-3xl font-bold text-gray-800 mb-8 flex items-center gap-3">
+              <span className="text-cyan-500">🔗</span> Benzer Ürünler
             </h2>
             
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -229,9 +229,9 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                 <Link 
                   href={`/products/${relatedProduct.id}`}
                   key={relatedProduct.id}
-                  className="group bg-slate-800/50 rounded-2xl overflow-hidden border border-slate-700 hover:border-cyan-500/50 transition-all"
+                  className="group bg-white rounded-2xl overflow-hidden border border-gray-200 hover:border-cyan-300 hover:shadow-lg transition-all"
                 >
-                  <div className="aspect-video bg-slate-900/50 overflow-hidden">
+                  <div className="aspect-video bg-gray-50 overflow-hidden">
                     <img 
                       src={relatedProduct.image_urls?.[0] || relatedProduct.image || '/placeholder.png'} 
                       alt={relatedProduct.name}
@@ -239,16 +239,16 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                     />
                   </div>
                   <div className="p-5">
-                    <p className="text-cyan-400 text-xs font-semibold uppercase mb-1">{relatedProduct.brand}</p>
-                    <h3 className="text-white font-bold mb-2 group-hover:text-cyan-300 transition-colors">
+                    <p className="text-cyan-600 text-xs font-semibold uppercase mb-1">{relatedProduct.brand}</p>
+                    <h3 className="text-gray-800 font-bold mb-2 group-hover:text-cyan-600 transition-colors">
                       {relatedProduct.name}
                     </h3>
                     <div className="flex items-center justify-between">
-                      <span className="orbitron text-xl font-bold text-cyan-400">
+                      <span className="orbitron text-xl font-bold text-cyan-600">
                         {relatedProduct.price} ₺
                       </span>
                       <span className={`text-xs px-2 py-1 rounded-full ${
-                        relatedProduct.in_stock ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                        relatedProduct.in_stock ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
                       }`}>
                         {relatedProduct.in_stock ? 'Stokta' : 'Tükendi'}
                       </span>
@@ -262,12 +262,12 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
       )}
 
       {/* CTA Section */}
-      <section className="py-12 bg-linear-to-r from-cyan-900/30 to-blue-900/30">
+      <section className="py-12 bg-gradient-to-r from-cyan-50 to-blue-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="orbitron text-2xl md:text-3xl font-bold text-white mb-4">
+          <h2 className="orbitron text-2xl md:text-3xl font-bold text-gray-800 mb-4">
             Sorularınız mı var?
           </h2>
-          <p className="text-gray-300 mb-6">
+          <p className="text-gray-600 mb-6">
             Ürün hakkında detaylı bilgi almak için bizimle iletişime geçebilirsiniz.
           </p>
           <Link 

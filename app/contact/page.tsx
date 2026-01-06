@@ -25,23 +25,23 @@ export default function ContactPage() {
 
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-white">
       {/* Hero Section with Image */}
       <section className="relative py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-cyan-950/30" />
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-cyan-50/30" />
         <div className="absolute inset-0">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
+          <div className="absolute top-20 left-10 w-72 h-72 bg-cyan-100/50 rounded-full blur-3xl" />
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-100/50 rounded-full blur-3xl" />
         </div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Text Content */}
             <div className="text-center lg:text-left">
-              <h1 className="orbitron text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 mb-4">
+              <h1 className="orbitron text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600 mb-4">
                 İletişime Geçin
               </h1>
-              <p className="text-lg text-gray-400 max-w-2xl">
+              <p className="text-lg text-gray-600 max-w-2xl">
                 Sorularınız, siparişleriniz veya teknik destek için bizimle iletişime geçebilirsiniz.
                 Size en kısa sürede dönüş yapacağız.
               </p>
@@ -49,20 +49,20 @@ export default function ContactPage() {
             
             {/* Hero Image */}
             <div className="relative hidden lg:block">
-              <div className="relative w-full h-80 rounded-2xl overflow-hidden border border-cyan-500/20 shadow-2xl shadow-cyan-500/10">
+              <div className="relative w-full h-80 rounded-2xl overflow-hidden border border-gray-200 shadow-2xl shadow-gray-200/50">
                 <img 
                   src="https://images.unsplash.com/photo-1639762681485-074b7f938ba0?q=80&w=800&auto=format&fit=crop"
                   alt="Bitcoin Mining"
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 via-transparent to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4">
                   <p className="text-cyan-300 font-semibold text-sm">🏆 Türkiye'nin Güvenilir ASIC Tedarikçisi</p>
                 </div>
               </div>
               {/* Decorative elements */}
-              <div className="absolute -top-4 -right-4 w-24 h-24 bg-cyan-500/20 rounded-full blur-2xl" />
-              <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-blue-500/20 rounded-full blur-2xl" />
+              <div className="absolute -top-4 -right-4 w-24 h-24 bg-cyan-200/50 rounded-full blur-2xl" />
+              <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-blue-200/50 rounded-full blur-2xl" />
             </div>
           </div>
         </div>
