@@ -41,27 +41,33 @@ export default async function ProductsSection() {
   });
 
   return (
-    <section id="products" className="py-20 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="orbitron text-4xl md:text-5xl font-black mb-4 text-transparent bg-clip-text bg-linear-to-r from-cyan-500 to-blue-600">
-            POPÜLER ÜRÜNLER
-          </h2>
-          <p className="text-gray-600 text-lg">En çok tercih edilen ASIC madencilik cihazları</p>
-        </div>
+    <div className="min-h-screen bg-white">
+      <Header />
+      
+      <section id="products" className="py-20 pt-32 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="orbitron text-4xl md:text-5xl font-black mb-4 text-transparent bg-clip-text bg-linear-to-r from-cyan-500 to-blue-600">
+              POPÜLER ÜRÜNLER
+            </h2>
+            <p className="text-gray-600 text-lg">En çok tercih edilen ASIC madencilik cihazları</p>
+          </div>
 
-        {/* Product Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {productsWithProfit && productsWithProfit.length > 0 ? (
-            productsWithProfit.map((product: any, idx: number) => (
-              <ProductCard key={product.id} product={product} idx={idx} />
-            ))
-          ) : (
-            <div className="col-span-3 text-center text-gray-500">Ürün bulunamadı.</div>
-          )}
+          {/* Product Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {productsWithProfit && productsWithProfit.length > 0 ? (
+              productsWithProfit.map((product: any, idx: number) => (
+                <ProductCard key={product.id} product={product} idx={idx} />
+              ))
+            ) : (
+              <div className="col-span-3 text-center text-gray-500">Ürün bulunamadı.</div>
+            )}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+      
+      <Footer />
+    </div>
   );
 }
 
